@@ -42,6 +42,8 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("This job will build a series of models that will predict both:");
             Console.WriteLine("Whether a player would make it on the HOF Ballot & would be inducted to the HOF.\n");
 
+            var tt = string.Empty;
+
             #region ML.NET Setup & Load Data
 
             Console.WriteLine("##########################");
@@ -550,7 +552,6 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("HOF Inducted Prediction:  " + predGreatInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predGreatInductedToHallOfFame.Probability);
 
             #endregion
-
 
             //var loadedModelPath = GetModelPath("LightGbm", true, "OnHallOfFameBallot");
             //var session = new InferenceSession(loadedModelPath);
