@@ -42,7 +42,7 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("This job will build a series of models that will predict both:");
             Console.WriteLine("Whether a player would make it on the HOF Ballot & would be inducted to the HOF.\n");
 
-            #region ML.NET Setup & Load Data
+            #region Step 1) ML.NET Setup & Load Data
 
             Console.WriteLine("##########################");
             Console.WriteLine("Step 1: Load Data...");
@@ -67,7 +67,7 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            #region Build Multiple Machine Learning Models
+            #region Step 2) Build Multiple Machine Learning Models
 
             Console.WriteLine("##########################");
             Console.WriteLine("Step 2: Train Models...");
@@ -342,7 +342,7 @@ namespace MLDotNet_BaseballClassification
 
             Console.WriteLine("Finished Baseball Predictions - Model Job \n");
 
-            #region Report Metrics
+            #region Step 3) Report Metrics
 
             Console.WriteLine("##########################");
             Console.WriteLine("Step 4: Report Metrics...");
@@ -427,7 +427,7 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            #region New Predictions
+            #region Step 4) New Predictions
 
             Console.WriteLine("##########################");
             Console.WriteLine("Step 4: New Predictions...");
@@ -556,43 +556,46 @@ namespace MLDotNet_BaseballClassification
             //var inputInfo = session.InputMetadata.First();
             //var outputInfo = session.OutputMetadata.First();
 
-            VBuffer<float> weights = new VBuffer<float>();
-            modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model.GetFeatureWeights(ref weights);
+            // TODO: FINISH
 
-            var transformedNewPredictionsData = modelLogisticRegressionInductedToHallOfFame.Transform(newPredictionsData);
-            var explainer = _mlContext.Model.Explainability.FeatureContributionCalculation(modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model);
-            var outputData = explainer.Fit(transformedNewPredictionsData).Transform(transformedNewPredictionsData);
+            //VBuffer<float> weights = new VBuffer<float>();
+            //modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model.GetFeatureWeights(ref weights);
 
-            var scoringEnumerator = _mlContext.CreateEnumerable<BaseballBatterScoreAndFeatureContribution>(outputData, true).GetEnumerator();
+            //var transformedNewPredictionsData = modelLogisticRegressionInductedToHallOfFame.Transform(newPredictionsData);
+            //var explainer = _mlContext.Model.Explainability.FeatureContributionCalculation(modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model);
+            //var outputData = explainer.Fit(transformedNewPredictionsData).Transform(transformedNewPredictionsData);
 
-            int index = 0;
-            Console.WriteLine("Probability\tScore\tBiggestFeature      \t\tValue\tWeight\tContribution");
-            while (scoringEnumerator.MoveNext() && index < 4)
-            {
-                var row = scoringEnumerator.Current;
+            //var scoringEnumerator = _mlContext.CreateEnumerable<BaseballBatterScoreAndFeatureContribution>(outputData, true).GetEnumerator();
 
-                // Get the feature index with the biggest contribution
-                var featureOfInterest = GetMostContributingFeature(row.FeatureContributions);
+            //int index = 0;
+            //Console.WriteLine("Probability\tScore\tBiggestFeature      \t\tValue\tWeight\tContribution");
+            //while (scoringEnumerator.MoveNext() && index < 4)
+            //{
+            //    var row = scoringEnumerator.Current;
 
-                // And the corresponding information about the feature
-                var value = row.Features[featureOfInterest];
-                var contribution = row.FeatureContributions[featureOfInterest];
-                var name = featureColumns[featureOfInterest];
-                var weight = weights.GetValues()[featureOfInterest];
+            //    // Get the feature index with the biggest contribution
+            //    var featureOfInterest = GetMostContributingFeature(row.FeatureContributions);
 
-                Console.WriteLine("{0:0.00}\t{1:0.00}\t\t{2}\t{3:0.00}\t{4:0.00}\t{5:0.00}",
-                    row.Probability,
-                    row.Score,
-                    name,
-                    value,
-                    weight,
-                    contribution
-                    );
+            //    // And the corresponding information about the feature
+            //    var value = row.Features[featureOfInterest];
+            //    var contribution = row.FeatureContributions[featureOfInterest];
+            //    var name = featureColumns[featureOfInterest];
+            //    var weight = weights.GetValues()[featureOfInterest];
 
-                index++;
-            }
+            //    Console.WriteLine("{0:0.00}\t{1:0.00}\t\t{2}\t{3:0.00}\t{4:0.00}\t{5:0.00}",
+            //        row.Probability,
+            //        row.Score,
+            //        name,
+            //        value,
+            //        weight,
+            //        contribution
+            //        );
+
+            //    index++;
+            //}
 
             // End of Job, report time
+            Console.WriteLine();
             Console.WriteLine(string.Format("Job Finished in: {0}", sw.Elapsed.TotalSeconds));
             Console.ReadLine();
         }
