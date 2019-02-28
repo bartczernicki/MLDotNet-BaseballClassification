@@ -26,13 +26,24 @@ namespace MLDotNet_BaseballClassification
         private static string _modelPath => Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}.zip", _labelColunmn));
         private static string _OnnxModelPath => Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}.onnx", _labelColunmn));
 
-        // List of columns used for training
-        // Comment out (or uncomment) feature names in order to explicitly select features for model training
+        // Configuration Arrays
+
+        // List of feature columns used for training
+        // Useage: Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
             //"YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
             "BattingAverage", "SluggingPct", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
-            "MajorLeaguePlayerOfTheYearAwards", "TB"
-        };
+            "MajorLeaguePlayerOfTheYearAwards", "TB" };
+        
+        // List of supervised learning labels
+        // Useage: At least one must be left
+        private static string[] labelColumns = new string[] { "OnHallOfFameBallot", "InductedToHallOfFame" };
+
+        // List of algorithms that support probability output
+        // Useage: Comment out (or uncomment) algorithm names to report model explainability
+        private static string[] algorithmsForModelExplainability = new string[] { "GeneralizedAdditiveModels", "LogisticRegression",
+                "FastTree", "LightGbm",
+                "StochasticDualCoordinateAscent", "StochasticGradientDescent"};
 
         static void Main(string[] args)
         {
@@ -166,7 +177,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineFastForestOnHallOfFameBallot =
                 GetBaseLinePipeline().Append(
-                _mlContext.BinaryClassification.Trainers.FastForest(labelColumn: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.FastForest(labelColumn: _labelColunmn, numLeaves: 100, numTrees: 500, minDatapointsInLeaves: 5, learningRate: 0.05)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastForestOnHallOfFameBallot = learningPipelineFastForestOnHallOfFameBallot.Fit(cachedTrainData);
@@ -343,18 +354,13 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("Step 4: Report Metrics...");
             Console.WriteLine("##########################\n");
 
-            var labelColumns = new string[] { "OnHallOfFameBallot", "InductedToHallOfFame" };
-            var algorithms = new string[] { "GeneralizedAdditiveModels", "LogisticRegression", "FastTree", "LightGbm",
-                "StochasticDualCoordinateAscent", "StochasticGradientDescent" };
-
-
-            for (int i = 0; i < algorithms.Length; i++)
+            for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
             {
                 for (int j = 0; j < labelColumns.Length; j++)
                 {
-                    var binaryClassificationMetrics = GetBinaryClassificationModelMetrics(labelColumns[j], algorithms[i], cachedValidationData);
+                    var binaryClassificationMetrics = GetBinaryClassificationModelMetrics(labelColumns[j], algorithmsForModelExplainability[i], cachedValidationData);
 
-                    Console.WriteLine("Evaluation Metrics for " + algorithms[i] + " | " + labelColumns[j]);
+                    Console.WriteLine("Evaluation Metrics for " + algorithmsForModelExplainability[i] + " | " + labelColumns[j]);
                     Console.WriteLine("******************");
                     Console.WriteLine("F1 Score:   " + Math.Round(binaryClassificationMetrics.F1Score, 4).ToString());
                     Console.WriteLine("AUC Score:  " + Math.Round(binaryClassificationMetrics.Auc, 4).ToString());
@@ -363,7 +369,7 @@ namespace MLDotNet_BaseballClassification
                     Console.WriteLine("Accuracy:   " + Math.Round(binaryClassificationMetrics.Accuracy, 4).ToString());
                     Console.WriteLine("******************");
 
-                    var loadedModel = LoadModel(GetModelPath(algorithmName: algorithms[i], isOnnx: false, label: labelColumns[j]));
+                    var loadedModel = LoadModel(GetModelPath(algorithmName: algorithmsForModelExplainability[i], isOnnx: false, label: labelColumns[j]));
                     var transformedModelData = loadedModel.Transform(cachedTrainData);
                     TransformerChain<ITransformer> lastTran = (TransformerChain<ITransformer>) loadedModel.LastTransformer;
                     var enumerator = lastTran.GetEnumerator();
@@ -589,7 +595,7 @@ namespace MLDotNet_BaseballClassification
 
             // End of Job, report time
             Console.WriteLine();
-            Console.WriteLine(string.Format("Model building job Finished in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
+            Console.WriteLine(string.Format("Model building job finished in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
             Console.ReadLine();
         }
 
