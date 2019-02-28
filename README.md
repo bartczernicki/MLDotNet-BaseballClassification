@@ -1,7 +1,7 @@
 # MLDotNet-BaseballClassification
 A .Net Core model building job that builds several models using MLB Baseball data from 1876 - 2017.  
 
-The outcome are two supervied learning predictions:
+The outcome are two supervised learning predictions:
 * On Hall Of Fame Ballot - whether a batter will be on the Hall of Fame Ballot, based on their career statistics
 * Inducted To Hall Of Fame - whether a batter will be inducted to the Hall of Fame, based on their career statistics
 
