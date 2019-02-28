@@ -470,7 +470,7 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("##########################\n");
 
             // Retrieve model path
-            var algorithmTypeName = "LogisticRegression";
+            var algorithmTypeName = "FieldAwareFactorization";
             var loadedModelOnHallOfFameBallot = LoadModel(GetModelPath(algorithmTypeName, false, "OnHallOfFameBallot"));
             var loadedModelInductedToHallOfFame = LoadModel(GetModelPath(algorithmTypeName, false, "InductedToHallOfFame"));
 
@@ -531,7 +531,7 @@ namespace MLDotNet_BaseballClassification
             };
             var greatMLBBatter = new MLBBaseballBatter
             {
-                FullPlayerName = "Bad Player",
+                FullPlayerName = "Great Player",
                 ID = 100f,
                 InductedToHallOfFame = false,
                 LastYearPlayed = 0f,
