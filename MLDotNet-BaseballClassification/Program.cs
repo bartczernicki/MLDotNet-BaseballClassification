@@ -75,12 +75,6 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("##########################\n");
 
 
-            var model = LoadModel(GetModelPath("LightGbm", false, "OnHallOfFameBallot"));
-            var type = model.GetType();
-           // Microsoft.ML.Data.EstimatorChain<BinaryPredictionTransformer<Microsoft.ML.Internal.Internallearn.IPredictorWithFeatureWeights<float>>>
-           // var testdff =
-           // (TransformerChain<ITransformer>) model;
-
             /* LIGHTGBM MODELS */
             Console.WriteLine("Training...LightGbm Models.");
 
@@ -373,7 +367,6 @@ namespace MLDotNet_BaseballClassification
                     var transformedModelData = loadedModel.Transform(cachedTrainData);
                     TransformerChain<ITransformer> lastTran = (TransformerChain<ITransformer>) loadedModel.LastTransformer;
                     var enumerator = lastTran.GetEnumerator();
-                    //enumerator.MoveNext
 
                     ISingleFeaturePredictionTransformer<IPredictorProducing<float>> transfomerForPfi = null;
                     while(enumerator.MoveNext())
@@ -387,7 +380,7 @@ namespace MLDotNet_BaseballClassification
                     // TODO: FIX
                     // Retrieve Top Features based on Permutation Feature Importance
                     var permutationMetrics = _mlContext.BinaryClassification.PermutationFeatureImportance
-                        (transfomerForPfi, transformedModelData, label: labelColumns[j], features: "Features", permutationCount: 5);
+                        (transfomerForPfi, transformedModelData, label: labelColumns[j], features: "Features", permutationCount: 10);
 
                     // Build a list of feature importance metrics
                     List<FeatureImportanceValue> featureImportanceValues = new List<FeatureImportanceValue>();
@@ -428,7 +421,7 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            #region Step 4) New Predictions
+            #region Step 4) New Predictions - Using Ficticious Player Data
 
             Console.WriteLine("##########################");
             Console.WriteLine("Step 4: New Predictions...");
@@ -439,11 +432,9 @@ namespace MLDotNet_BaseballClassification
             var loadedModelOnHallOfFameBallot = LoadModel(GetModelPath(algorithmTypeName, false, "OnHallOfFameBallot"));
             var loadedModelInductedToHallOfFame = LoadModel(GetModelPath(algorithmTypeName, false, "InductedToHallOfFame"));
 
-
             // Create prediction engine
             var predEngineOnHallOfFameBallot = loadedModelOnHallOfFameBallot.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(_mlContext);
             var predEngineInductedToHallOfFame = loadedModelInductedToHallOfFame.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(_mlContext);
-
 
             // Create statistics for bad, average & great player
             var badMLBBatter = new MLBBaseballBatter
@@ -534,7 +525,7 @@ namespace MLDotNet_BaseballClassification
             var predGreatInductedToHallOfFame = predEngineInductedToHallOfFame.Predict(greatMLBBatter);
 
             // Report the results
-            Console.WriteLine("Algorithm Used in Model Prediction: " + algorithmTypeName);
+            Console.WriteLine("Algorithm Used for Model Prediction: " + algorithmTypeName);
             Console.WriteLine("Bad Baseball Player Prediction");
             Console.WriteLine("------------------------------");
             Console.WriteLine("On HOF Ballot Prediction: " + predBadOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predBadOnHallOfFameBallot.Probability);
@@ -552,12 +543,13 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
+
+            // TODO: FINISH
+
             //var loadedModelPath = GetModelPath("LightGbm", true, "OnHallOfFameBallot");
             //var session = new InferenceSession(loadedModelPath);
             //var inputInfo = session.InputMetadata.First();
             //var outputInfo = session.OutputMetadata.First();
-
-            // TODO: FINISH
 
             //VBuffer<float> weights = new VBuffer<float>();
             //modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model.GetFeatureWeights(ref weights);
