@@ -13,4 +13,4 @@ The model building job includes the following features:
 * Persists the trained models in two different formats: native ML.NET and ONNX
 * Loads the persisted models from storage and performs model explainability
 * Applies simple perscriptive/rules engine to select the "best model"
-* Selected model is used for inference on new ficticious baseball player careers
+* Selected "best model" is used for inference on new ficticious baseball player careers
