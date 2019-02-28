@@ -8,6 +8,7 @@ using Microsoft.ML;
 using Microsoft.ML.Core.Data;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms.Normalizers;
+using System.Threading.Tasks;
 
 using System.Diagnostics;
 
@@ -31,7 +32,7 @@ namespace MLDotNet_BaseballClassification
         // List of feature columns used for training
         // Useage: Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
-            //"YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
+            "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
             "BattingAverage", "SluggingPct", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
             "MajorLeaguePlayerOfTheYearAwards", "TB" };
         
@@ -41,7 +42,9 @@ namespace MLDotNet_BaseballClassification
 
         // List of algorithms that support probability output
         // Useage: Comment out (or uncomment) algorithm names to report model explainability
-        private static string[] algorithmsForModelExplainability = new string[] { "GeneralizedAdditiveModels", "LogisticRegression",
+        private static string[] algorithmsForModelExplainability = new string[] {
+                "FieldAwareFactorization",
+                "GeneralizedAdditiveModels", "LogisticRegression",
                 "FastTree", "LightGbm",
                 "StochasticDualCoordinateAscent", "StochasticGradientDescent"};
 
@@ -85,11 +88,9 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("Step 2: Train Models...");
             Console.WriteLine("##########################\n");
 
-
             /* LIGHTGBM MODELS */
             Console.WriteLine("Training...LightGbm Models.");
 
-            _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineLightGbmOnHallOfFameBallot =
                 GetBaseLinePipeline().Append(
@@ -177,7 +178,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineFastForestOnHallOfFameBallot =
                 GetBaseLinePipeline().Append(
-                _mlContext.BinaryClassification.Trainers.FastForest(labelColumn: _labelColunmn, numLeaves: 100, numTrees: 500, minDatapointsInLeaves: 5, learningRate: 0.05)
+                _mlContext.BinaryClassification.Trainers.FastForest(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastForestOnHallOfFameBallot = learningPipelineFastForestOnHallOfFameBallot.Fit(cachedTrainData);
@@ -224,6 +225,32 @@ namespace MLDotNet_BaseballClassification
             // Save the model to storage
             SaveModel("FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame);
             SaveOnnxModel("FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame, _mlContext, cachedTrainData);
+
+            /* FIELD AWARE FACTORIZATION MODELS */
+            Console.WriteLine("Training...Field Aware Factorization Models.");
+            _labelColunmn = "OnHallOfFameBallot";
+            // Build simple data pipeline
+            var learningPipelineFieldAwareFactorizationOnHallOfFameBallot =
+                GetBaseLinePipeline().Append(
+                _mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(featureColumns: new[] { "Features" }, labelColumn: _labelColunmn)
+                );
+            // Fit (build a Machine Learning Model)
+            var modelFieldAwareFactorizationOnHallOfFameBallot = learningPipelineFieldAwareFactorizationOnHallOfFameBallot.Fit(cachedTrainData);
+            // Save the model to storage
+            SaveModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationOnHallOfFameBallot);
+            SaveOnnxModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationOnHallOfFameBallot, _mlContext, cachedTrainData);
+
+            _labelColunmn = "InductedToHallOfFame";
+            // Build simple data pipeline
+            var learningPipelineFieldAwareFactorizationInductedToHallOfFame =
+                GetBaseLinePipeline().Append(
+                _mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(featureColumns: new[] { "Features" }, labelColumn: _labelColunmn)
+                );
+            // Fit (build a Machine Learning Model)
+            var modelFieldAwareFactorizationInductedToHallOfFame = learningPipelineFieldAwareFactorizationInductedToHallOfFame.Fit(cachedTrainData);
+            // Save the model to storage
+            SaveModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationInductedToHallOfFame);
+            SaveOnnxModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* STOCHASTIC GRADIENT DESCENT MODELS */
@@ -341,12 +368,12 @@ namespace MLDotNet_BaseballClassification
             //var test = _mlContext.BinaryClassification.CrossValidate(cachedTrainData, learningPipelineLightGbmInductedToHallOfFame, 100,
             //    labelColumn: _labelColunmn, stratificationColumn: _labelColunmn);
 
+            Console.WriteLine(string.Empty);
+
             #endregion
 
             // Debug Only: view data pipeline data
             // var previewLearningPipeline = learningPipeline.Preview(cachedTrainData, 100, 100);
-
-            Console.WriteLine("Finished Baseball Predictions - Model Job \n");
 
             #region Step 3) Report Metrics
 
@@ -383,39 +410,48 @@ namespace MLDotNet_BaseballClassification
                         }
                     }
 
-                    // TODO: FIX
-                    // Retrieve Top Features based on Permutation Feature Importance
-                    var permutationMetrics = _mlContext.BinaryClassification.PermutationFeatureImportance
-                        (transfomerForPfi, transformedModelData, label: labelColumns[j], features: "Features", permutationCount: 10);
-
-                    // Build a list of feature importance metrics
-                    List<FeatureImportanceValue> featureImportanceValues = new List<FeatureImportanceValue>();
-                    for (int k = 0; k < permutationMetrics.Length; k++)
+                    if (transfomerForPfi != null)
                     {
-                        featureImportanceValues.Add(
-                                new FeatureImportanceValue
-                                {
-                                    FeatureName = featureColumns[k],
-                                    PerformanceMetricName = "F1Score.Mean",
-                                    PerformanceMetricValue = permutationMetrics[k].F1Score.Mean
-                                }
-                            );
-                    }
+                        // TODO: FIX
+                        // Retrieve Top Features based on Permutation Feature Importance
+                        var permutationMetrics = _mlContext.BinaryClassification.PermutationFeatureImportance
+                            (transfomerForPfi, transformedModelData, label: labelColumns[j], features: "Features", permutationCount: 10);
 
-                    // Filter out NaN values and order by lowest values
-                    // Note: Should be done with absolute and check for positive values for features
-                    var orderedFeatures = featureImportanceValues.Where(a => !Double.IsNaN(a.PerformanceMetricValue)).OrderBy(a => a.PerformanceMetricValue).ToList();
-                    var numberOfFeaturesToReport = 4;
-
-                    Console.WriteLine("Most important features (" + numberOfFeaturesToReport + ")");
-                    Console.WriteLine("******************");
-
-                    for (int l = 0; l < numberOfFeaturesToReport; l++)
-                    {
-                        if (l+1 <= featureImportanceValues.Count && l < orderedFeatures.Count)
+                        // Build a list of feature importance metrics
+                        List<FeatureImportanceValue> featureImportanceValues = new List<FeatureImportanceValue>();
+                        for (int k = 0; k < permutationMetrics.Length; k++)
                         {
-                            Console.WriteLine(orderedFeatures[l].FeatureName + ": " + Math.Round(orderedFeatures[l].PerformanceMetricValue, 4).ToString());
+                            featureImportanceValues.Add(
+                                    new FeatureImportanceValue
+                                    {
+                                        FeatureName = featureColumns[k],
+                                        PerformanceMetricName = "F1Score.Mean",
+                                        PerformanceMetricValue = permutationMetrics[k].F1Score.Mean
+                                    }
+                                );
                         }
+
+                        // Filter out NaN values and order by lowest values
+                        // Note: Should be done with absolute and check for positive values for features
+                        var orderedFeatures = featureImportanceValues.Where(a => !Double.IsNaN(a.PerformanceMetricValue)).OrderBy(a => a.PerformanceMetricValue).ToList();
+                        var numberOfFeaturesToReport = 4;
+
+                        Console.WriteLine("Most important features (" + numberOfFeaturesToReport + ")");
+                        Console.WriteLine("******************");
+
+                        for (int l = 0; l < numberOfFeaturesToReport; l++)
+                        {
+                            if (l + 1 <= featureImportanceValues.Count && l < orderedFeatures.Count)
+                            {
+                                Console.WriteLine(orderedFeatures[l].FeatureName + ": " + Math.Round(orderedFeatures[l].PerformanceMetricValue, 4).ToString());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Most important features ()");
+                        Console.WriteLine("******************");
+                        Console.WriteLine("Model's algorithm does not support explainability.");
                     }
 
                     Console.WriteLine("******************");
@@ -593,7 +629,7 @@ namespace MLDotNet_BaseballClassification
             //    index++;
             //}
 
-            // End of Job, report time
+            // End of job, report time
             Console.WriteLine();
             Console.WriteLine(string.Format("Model building job finished in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
             Console.ReadLine();
@@ -709,7 +745,8 @@ namespace MLDotNet_BaseballClassification
         {
             var modelPath = GetModelPath(algorithmName, true, labelColumn);
 
-            if (algorithmName != "AveragedPerceptron" && algorithmName != "GeneralizedAdditiveModels" && algorithmName != "LinearSupportVectorMachines")
+            if (algorithmName != "AveragedPerceptron" && algorithmName != "GeneralizedAdditiveModels" && 
+                algorithmName != "LinearSupportVectorMachines" && algorithmName != "FieldAwareFactorization")
             {
                 var protoBufModel = mlContext.Model.ConvertToOnnx(model, inputData);
 
