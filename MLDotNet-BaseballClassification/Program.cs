@@ -470,7 +470,7 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("##########################\n");
 
             // Retrieve model path
-            var algorithmTypeName = "FieldAwareFactorization";
+            var algorithmTypeName = "FastForest";
             var loadedModelOnHallOfFameBallot = LoadModel(GetModelPath(algorithmTypeName, false, "OnHallOfFameBallot"));
             var loadedModelInductedToHallOfFame = LoadModel(GetModelPath(algorithmTypeName, false, "InductedToHallOfFame"));
 
@@ -650,6 +650,7 @@ namespace MLDotNet_BaseballClassification
             // Load model for both prediction types
             var loadedModel = LoadModel(loadedModelPath);
 
+            // Evaluate the model metrics using validation data
             var metrics = _mlContext.BinaryClassification.Evaluate(loadedModel.Transform(validationData), label: labelColumn);
 
             return metrics;

@@ -6,19 +6,17 @@ using System.Text;
 
 namespace MLDotNet_BaseballClassification
 {
-    public class BaseballModel
+    public class BaseballClassificationModel
     {
         public string LabelColumn { get; set; }
-        public MLContext MLNetContext { get; set; }
-        public IDataView TrainingData { get; set; }
         public string BinaryClassificationAlgorithm { get; set; }
+        public BinaryClassificationMetricsStatistics Metrics { get; set; }
 
-        public BaseballModel(string labelColumn, MLContext mlNetContext, IDataView trainingData, string binaryClassificationAlgorithm)
+        public BaseballClassificationModel(string labelColumn, string binaryClassificationAlgorithm, BinaryClassificationMetricsStatistics metrics)
         {
             this.LabelColumn = labelColumn;
-            this.MLNetContext = mlNetContext;
-            this.TrainingData = trainingData;
             this.BinaryClassificationAlgorithm = binaryClassificationAlgorithm;
+            this.Metrics = Metrics;
         }
 
         //public 
