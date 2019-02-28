@@ -27,8 +27,9 @@ namespace MLDotNet_BaseballClassification
         private static string _OnnxModelPath => Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}.onnx", _labelColunmn));
 
         // List of columns used for training
+        // Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
-            "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
+            //"YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
             "BattingAverage", "SluggingPct", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
             "MajorLeaguePlayerOfTheYearAwards", "TB"
         };
@@ -412,7 +413,7 @@ namespace MLDotNet_BaseballClassification
 
                     for (int l = 0; l < numberOfFeaturesToReport; l++)
                     {
-                        if (l+1 <= featureImportanceValues.Count)
+                        if (l+1 <= featureImportanceValues.Count && l < orderedFeatures.Count)
                         {
                             Console.WriteLine(orderedFeatures[l].FeatureName + ": " + Math.Round(orderedFeatures[l].PerformanceMetricValue, 4).ToString());
                         }
@@ -596,7 +597,7 @@ namespace MLDotNet_BaseballClassification
 
             // End of Job, report time
             Console.WriteLine();
-            Console.WriteLine(string.Format("Job Finished in: {0}", sw.Elapsed.TotalSeconds));
+            Console.WriteLine(string.Format("Model building job Finished in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
             Console.ReadLine();
         }
 
@@ -674,6 +675,7 @@ namespace MLDotNet_BaseballClassification
             }
             
             // Cast the loaded model to a transformer chain
+            // This allows for interacting with the LastTransformer property
             TransformerChain<ITransformer> transfomerChain = (TransformerChain<ITransformer>) loadedModel;
 
             return transfomerChain;
