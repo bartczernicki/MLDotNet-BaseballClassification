@@ -72,9 +72,11 @@ namespace MLDotNet_BaseballClassification
             var dataValidation = _mlContext.Data.ReadFromTextFile<MLBBaseballBatter>(path: _validationDataPath,
                 hasHeader: true, separatorChar: ',', allowQuotedStrings: false);
 
+            #if DEBUG
             // Debug Only: Preview the data
             var dataTrainPreview = dataTrain.Preview();
             var dataValidationPreview = dataValidation.Preview();
+            #endif
 
             // Cache the loaded data
             var cachedTrainData = _mlContext.Data.Cache(dataTrain);
@@ -372,9 +374,6 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            // Debug Only: view data pipeline data
-            // var previewLearningPipeline = learningPipeline.Preview(cachedTrainData, 100, 100);
-
             #region Step 3) Report Metrics
 
             Console.WriteLine("##########################");
@@ -652,8 +651,16 @@ namespace MLDotNet_BaseballClassification
             // Load model for both prediction types
             var loadedModel = LoadModel(loadedModelPath);
 
+            // Apply the transformation pipeline to the data (i.e. normalization, probability score etc.)
+            var transformedData = loadedModel.Transform(validationData);
+
+            #if DEBUG
+            var validationDataPreview = validationData.Preview(100);
+            var transformedDataPreview = transformedData.Preview(100);
+            #endif
+
             // Evaluate the model metrics using validation data
-            var metrics = _mlContext.BinaryClassification.Evaluate(loadedModel.Transform(validationData), label: labelColumn);
+            var metrics = _mlContext.BinaryClassification.Evaluate(transformedData, label: labelColumn);
 
             return metrics;
         }
@@ -691,9 +698,6 @@ namespace MLDotNet_BaseballClassification
             var baselineTransform = _mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", featureColumns)
                 .Append(_mlContext.Transforms.Normalize("Features", "FeaturesBeforeNormalization",
                 NormalizingEstimator.NormalizerMode.MinMax));
-
-            // Debug Only: View transform
-            // var pipelineTransformPreview = baselineTransform.Preview(dataTrain, 100);
 
             return baselineTransform;
         }
