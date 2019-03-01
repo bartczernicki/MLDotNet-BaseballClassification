@@ -7,9 +7,9 @@ The outcome are two supervised learning predictions:
 
 The model building job includes the following features:
 * Builds multiple ML.NET binary classification models in a single C# "script" (job)
-* Dynamic Feature Selection - Select features from an array to adjust model input dynamically
+* Dynamic Feature Selection - Select features from a configuration array to adjust model input dynamically
 * Dynamic Supervised Learning - Includes two label fields in a single data set, that can be switched dynamically
-* Base transformer pipeline that is re-used for all trained models as a base
+* Base data transformer pipeline that is re-used for all trained models as a base
 * Reports various performance metrics using a pre-defined holdout set
 * Persists the trained models in two different formats: native ML.NET and ONNX
 * Loads the persisted models from storage and performs model explainability
