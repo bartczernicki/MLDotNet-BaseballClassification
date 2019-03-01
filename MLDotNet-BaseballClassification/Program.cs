@@ -469,8 +469,10 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("Step 4: New Predictions...");
             Console.WriteLine("##########################\n");
 
+            // Set algorithm type to use for predictions
             // Retrieve model path
-            var algorithmTypeName = "FastForest";
+            // TODO: Hardcoded add perscriptive rules engine
+            var algorithmTypeName = "GeneralizedAdditiveModels";
             var loadedModelOnHallOfFameBallot = LoadModel(GetModelPath(algorithmTypeName, false, "OnHallOfFameBallot"));
             var loadedModelInductedToHallOfFame = LoadModel(GetModelPath(algorithmTypeName, false, "InductedToHallOfFame"));
 
