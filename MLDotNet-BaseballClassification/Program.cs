@@ -392,7 +392,7 @@ namespace MLDotNet_BaseballClassification
             {
                 for (int j = 0; j < labelColumns.Length; j++)
                 {
-                    var binaryClassificationMetrics = GetBinaryClassificationModelMetrics(labelColumns[j], algorithmsForModelExplainability[i], cachedValidationData);
+                    var binaryClassificationMetrics = Utilities.GetBinaryClassificationModelMetrics(_appPath, _mlContext, labelColumns[j], algorithmsForModelExplainability[i], cachedValidationData);
 
                     Console.WriteLine("Evaluation Metrics for " + algorithmsForModelExplainability[i] + " | " + labelColumns[j]);
                     Console.WriteLine("******************");
@@ -642,35 +642,6 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine();
             Console.WriteLine(string.Format("Model building job finished in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
             Console.ReadLine();
-        }
-
-        /// <summary>
-        /// Get Binary classfication metrics from a persisted model
-        /// </summary>
-        /// <param name="labelColumn"></param>
-        /// <param name="algorithmTypeName"></param>
-        /// <param name="validationData"></param>
-        /// <returns></returns>
-        private static CalibratedBinaryClassificationMetrics GetBinaryClassificationModelMetrics(string labelColumn, string algorithmTypeName, IDataView validationData)
-        {
-            // Retrieve model path
-            var loadedModelPath = Utilities.GetModelPath(_appPath, algorithmTypeName, false, labelColumn);
-
-            // Load model for both prediction types
-            var loadedModel = Utilities.LoadModel(_mlContext, (loadedModelPath));
-
-            // Apply the transformation pipeline to the data (i.e. normalization, probability score etc.)
-            var transformedData = loadedModel.Transform(validationData);
-
-            #if DEBUG
-            var validationDataPreview = validationData.Preview(100);
-            var transformedDataPreview = transformedData.Preview(100);
-            #endif
-
-            // Evaluate the model metrics using validation data
-            var metrics = _mlContext.BinaryClassification.Evaluate(transformedData, label: labelColumn);
-
-            return metrics;
         }
     }
 }
