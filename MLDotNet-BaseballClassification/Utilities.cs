@@ -43,6 +43,37 @@ namespace MLDotNet_BaseballClassification
         }
 
         /// <summary>
+        /// Get Regression metrics for a persisted model
+        /// </summary>
+        /// <param name="appPath"></param>
+        /// <param name="mlContext"></param>
+        /// <param name="labelColumn"></param>
+        /// <param name="algorithmTypeName"></param>
+        /// <param name="validationData"></param>
+        /// <returns></returns>
+        public static RegressionMetrics GetRegressionModelMetrics(string appPath, MLContext mlContext, string labelColumn, string algorithmTypeName, IDataView validationData)
+        {
+            // Retrieve model path
+            var loadedModelPath = Utilities.GetModelPath(appPath, algorithmTypeName, false, labelColumn);
+
+            // Load model for both prediction types
+            var loadedModel = LoadModel(mlContext, loadedModelPath);
+
+            // Apply the transformation pipeline to the data (i.e. normalization, probability score etc.)
+            var transformedData = loadedModel.Transform(validationData);
+
+            #if DEBUG
+            var validationDataPreview = validationData.Preview(100);
+            var transformedDataPreview = transformedData.Preview(100);
+            #endif
+
+            // Evaluate the model metrics using validation data
+            var metrics = mlContext.Regression.Evaluate(transformedData, label: labelColumn);
+
+            return metrics;
+        }
+
+        /// <summary>
         /// Get model path (ONNX, or MLNet (zip file)
         /// </summary>
         /// <param name="algorithmName"></param>

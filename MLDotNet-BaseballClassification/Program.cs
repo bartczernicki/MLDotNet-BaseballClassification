@@ -24,9 +24,6 @@ namespace MLDotNet_BaseballClassification
 
         private static string _labelColunmn = "OnHallOfFameBallot";
 
-        private static string _modelPath => Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}.zip", _labelColunmn));
-        private static string _OnnxModelPath => Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}.onnx", _labelColunmn));
-
         // Configuration Arrays
 
         // List of feature columns used for training
@@ -68,7 +65,7 @@ namespace MLDotNet_BaseballClassification
             // Set the seed explicitly for reproducability (models will be built with consistent results)
             _mlContext = new MLContext(seed: 200);
 
-            // Read the data from a text file
+            // Read the training/validation data from a text file
             var dataTrain = _mlContext.Data.ReadFromTextFile<MLBBaseballBatter>(path: _trainDataPath,
                 hasHeader: true, separatorChar: ',', allowQuotedStrings: false);
             var dataValidation = _mlContext.Data.ReadFromTextFile<MLBBaseballBatter>(path: _validationDataPath,
@@ -382,10 +379,10 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            #region Step 3) Report Metrics
+            #region Step 3) Report Performance Metrics
 
             Console.WriteLine("##########################");
-            Console.WriteLine("Step 4: Report Metrics...");
+            Console.WriteLine("Step 3: Report Metrics...");
             Console.WriteLine("##########################\n");
 
             for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
@@ -548,7 +545,7 @@ namespace MLDotNet_BaseballClassification
                 YearsPlayed = 20f,
                 AB = 10000f,
                 R = 1900f,
-                H = 3000f,
+                H = 3500f,
                 Doubles = 500f,
                 Triples = 150f,
                 HR = 600f,
