@@ -50,12 +50,14 @@ namespace MLDotNet_BaseballClassification
 
         static void Main(string[] args)
         {
+            // Start stopwatch to time model job
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
             Console.WriteLine("Starting Baseball Predictions - Model Job");
             Console.WriteLine("This job will build a series of models that will predict both:");
-            Console.WriteLine("Whether a player would make it on the HOF Ballot & would be inducted to the HOF.\n");
+            Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
+            Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).\n");
 
             #region Step 1) ML.NET Setup & Load Data
 
@@ -63,7 +65,7 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("Step 1: Load Data...");
             Console.WriteLine("##########################\n");
 
-            // Set the seed for reproducability
+            // Set the seed explicitly for reproducability (models will be built with consistent results)
             _mlContext = new MLContext(seed: 100);
 
             // Read the data from a text file
@@ -73,7 +75,7 @@ namespace MLDotNet_BaseballClassification
                 hasHeader: true, separatorChar: ',', allowQuotedStrings: false);
 
             #if DEBUG
-            // Debug Only: Preview the data
+            // Debug Only: Preview the training/validation data
             var dataTrainPreview = dataTrain.Preview();
             var dataValidationPreview = dataValidation.Preview();
             #endif
@@ -86,6 +88,12 @@ namespace MLDotNet_BaseballClassification
 
             #region Step 2) Build Multiple Machine Learning Models
 
+            // Notes:
+            // Model training is for demo purposes and uses the default hyperparameters.
+            // Default parameters were used in optimizing for large data sets.
+            // It is best practice to always provide hyperparameters explicitly in order to have historical reproducability
+            // as the ML.NET API evolves.
+           
             Console.WriteLine("##########################");
             Console.WriteLine("Step 2: Train Models...");
             Console.WriteLine("##########################\n");
@@ -95,26 +103,26 @@ namespace MLDotNet_BaseballClassification
 
             // Build simple data pipeline
             var learningPipelineLightGbmOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.LightGbm(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelLightGbmOnHallOfFameBallot = learningPipelineLightGbmOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallot);
-            SaveOnnxModel("LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineLightGbmInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.LightGbm(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelLightGbmInductedToHallOfFame = learningPipelineLightGbmInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("LightGbm", _labelColunmn, modelLightGbmInductedToHallOfFame);
-            SaveOnnxModel("LightGbm", _labelColunmn, modelLightGbmInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "LightGbm", _labelColunmn, modelLightGbmInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "LightGbm", _labelColunmn, modelLightGbmInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* LOGISTIC REGRESSION MODELS */
@@ -123,26 +131,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineLogisticRegressionOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
-                _mlContext.BinaryClassification.Trainers.LogisticRegression(labelColumn: _labelColunmn, l1Weight: 0.4f, l2Weight: 0.4f)
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
+                _mlContext.BinaryClassification.Trainers.LogisticRegression(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelLogisticRegressionOnHallOfFameBallot = learningPipelineLogisticRegressionOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("LogisticRegression", _labelColunmn, modelLogisticRegressionOnHallOfFameBallot);
-            SaveOnnxModel("LogisticRegression", _labelColunmn, modelLogisticRegressionOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "LogisticRegression", _labelColunmn, modelLogisticRegressionOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "LogisticRegression", _labelColunmn, modelLogisticRegressionOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineLogisticRegressionInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
-                _mlContext.BinaryClassification.Trainers.LogisticRegression(labelColumn: _labelColunmn, l1Weight: 0.4f, l2Weight: 0.4f)
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
+                _mlContext.BinaryClassification.Trainers.LogisticRegression(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelLogisticRegressionInductedToHallOfFame = learningPipelineLogisticRegressionInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("LogisticRegression", _labelColunmn, modelLogisticRegressionInductedToHallOfFame);
-            SaveOnnxModel("LogisticRegression", _labelColunmn, modelLogisticRegressionInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "LogisticRegression", _labelColunmn, modelLogisticRegressionInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "LogisticRegression", _labelColunmn, modelLogisticRegressionInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* AVERAGED PERCEPTRON MODELS */
@@ -151,26 +159,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineAveragedPerceptronOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelAveragedPerceptronOnHallOfFameBallot = learningPipelineAveragedPerceptronOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("AveragedPerceptron", _labelColunmn, modelAveragedPerceptronOnHallOfFameBallot);
-            SaveOnnxModel("AveragedPerceptron", _labelColunmn, modelAveragedPerceptronOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "AveragedPerceptron", _labelColunmn, modelAveragedPerceptronOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "AveragedPerceptron", _labelColunmn, modelAveragedPerceptronOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineAveragedPerceptronInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelAveragedPerceptronInductedToHallOfFame = learningPipelineAveragedPerceptronInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("AveragedPerceptron", _labelColunmn, modelAveragedPerceptronInductedToHallOfFame);
-            SaveOnnxModel("AveragedPerceptron", _labelColunmn, modelAveragedPerceptronInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "AveragedPerceptron", _labelColunmn, modelAveragedPerceptronInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "AveragedPerceptron", _labelColunmn, modelAveragedPerceptronInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* FAST FOREST MODELS */
@@ -179,26 +187,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineFastForestOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.FastForest(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastForestOnHallOfFameBallot = learningPipelineFastForestOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("FastForest", _labelColunmn, modelFastForestOnHallOfFameBallot);
-            SaveOnnxModel("FastForest", _labelColunmn, modelFastForestOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "FastForest", _labelColunmn, modelFastForestOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "FastForest", _labelColunmn, modelFastForestOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineFastForestInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.FastForest(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastForestInductedToHallOfFame = learningPipelineFastForestInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("FastForest", _labelColunmn, modelFastForestInductedToHallOfFame);
-            SaveOnnxModel("FastForest", _labelColunmn, modelFastForestInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "FastForest", _labelColunmn, modelFastForestInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "FastForest", _labelColunmn, modelFastForestInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* FAST TREE MODELS */
@@ -207,52 +215,52 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineFastTreeOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.FastTree(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeOnHallOfFameBallot = learningPipelineFastTreeOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallot);
-            SaveOnnxModel("FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineFastTreeInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.FastTree(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeInductedToHallOfFame = learningPipelineFastTreeInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame);
-            SaveOnnxModel("FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame, _mlContext, cachedTrainData);
 
             /* FIELD AWARE FACTORIZATION MODELS */
             Console.WriteLine("Training...Field Aware Factorization Models.");
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineFieldAwareFactorizationOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(featureColumns: new[] { "Features" }, labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFieldAwareFactorizationOnHallOfFameBallot = learningPipelineFieldAwareFactorizationOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationOnHallOfFameBallot);
-            SaveOnnxModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineFieldAwareFactorizationInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(featureColumns: new[] { "Features" }, labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelFieldAwareFactorizationInductedToHallOfFame = learningPipelineFieldAwareFactorizationInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationInductedToHallOfFame);
-            SaveOnnxModel("FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "FieldAwareFactorization", _labelColunmn, modelFieldAwareFactorizationInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* STOCHASTIC GRADIENT DESCENT MODELS */
@@ -261,26 +269,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineStochasticGradientDescentOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.StochasticGradientDescent(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelStochasticGradientDescentOnHallOfFameBallot = learningPipelineStochasticGradientDescentOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentOnHallOfFameBallot);
-            SaveOnnxModel("StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineStochasticGradientDescentInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.StochasticGradientDescent(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelStochasticGradientDescentInductedToHallOfFame = learningPipelineStochasticGradientDescentInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentInductedToHallOfFame);
-            SaveOnnxModel("StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "StochasticGradientDescent", _labelColunmn, modelStochasticGradientDescentInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* STOCHASTIC DUAL COORDINATE ASCENT MODELS */
@@ -289,26 +297,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineStochasticDualCoordinateAscentOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.StochasticDualCoordinateAscent(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelStochasticDualCoordinateAscentOnHallOfFameBallot = learningPipelineStochasticDualCoordinateAscentOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentOnHallOfFameBallot);
-            SaveOnnxModel("StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineStochasticDualCoordinateAscentInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.StochasticDualCoordinateAscent(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelStochasticDualCoordinateAscentInductedToHallOfFame = learningPipelineStochasticDualCoordinateAscentInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentInductedToHallOfFame);
-            SaveOnnxModel("StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "StochasticDualCoordinateAscent", _labelColunmn, modelStochasticDualCoordinateAscentInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* GENERALIZED ADDITIVE MODELS */
@@ -317,26 +325,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineGeneralizedAdditiveModelsOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.GeneralizedAdditiveModels(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelGeneralizedAdditiveModelsOnHallOfFameBallot = learningPipelineGeneralizedAdditiveModelsOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsOnHallOfFameBallot);
-            SaveOnnxModel("GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineGeneralizedAdditiveModelsInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.GeneralizedAdditiveModels(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelGeneralizedAdditiveModelsInductedToHallOfFame = learningPipelineGeneralizedAdditiveModelsInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsInductedToHallOfFame);
-            SaveOnnxModel("GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "GeneralizedAdditiveModels", _labelColunmn, modelGeneralizedAdditiveModelsInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             /* LINEAR SUPPORT VECTOR MODELS */
@@ -345,26 +353,26 @@ namespace MLDotNet_BaseballClassification
             _labelColunmn = "OnHallOfFameBallot";
             // Build simple data pipeline
             var learningPipelineLinearSupportVectorMachinesOnHallOfFameBallot =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.LinearSupportVectorMachines(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelLinearSupportVectorMachinesOnHallOfFameBallot = learningPipelineLinearSupportVectorMachinesOnHallOfFameBallot.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesOnHallOfFameBallot);
-            SaveOnnxModel("LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesOnHallOfFameBallot);
+            Utilities.SaveOnnxModel(_appPath, "LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesOnHallOfFameBallot, _mlContext, cachedTrainData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
             var learningPipelineLinearSupportVectorMachinesInductedToHallOfFame =
-                GetBaseLinePipeline().Append(
+                Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.LinearSupportVectorMachines(labelColumn: _labelColunmn)
                 );
             // Fit (build a Machine Learning Model)
             var modelLinearSupportVectorMachinesInductedToHallOfFame = learningPipelineLinearSupportVectorMachinesInductedToHallOfFame.Fit(cachedTrainData);
             // Save the model to storage
-            SaveModel("LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesInductedToHallOfFame);
-            SaveOnnxModel("LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(_appPath, _mlContext, "LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesInductedToHallOfFame);
+            Utilities.SaveOnnxModel(_appPath, "LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
             //var test = _mlContext.BinaryClassification.CrossValidate(cachedTrainData, learningPipelineLightGbmInductedToHallOfFame, 100,
@@ -395,7 +403,7 @@ namespace MLDotNet_BaseballClassification
                     Console.WriteLine("Accuracy:   " + Math.Round(binaryClassificationMetrics.Accuracy, 4).ToString());
                     Console.WriteLine("******************");
 
-                    var loadedModel = LoadModel(GetModelPath(algorithmName: algorithmsForModelExplainability[i], isOnnx: false, label: labelColumns[j]));
+                    var loadedModel = Utilities.LoadModel(_mlContext, Utilities.GetModelPath(_appPath, algorithmName: algorithmsForModelExplainability[i], isOnnx: false, label: labelColumns[j]));
                     var transformedModelData = loadedModel.Transform(cachedTrainData);
                     TransformerChain<ITransformer> lastTran = (TransformerChain<ITransformer>) loadedModel.LastTransformer;
                     var enumerator = lastTran.GetEnumerator();
@@ -461,7 +469,7 @@ namespace MLDotNet_BaseballClassification
 
 
             #endregion
-
+        
             #region Step 4) New Predictions - Using Ficticious Player Data
 
             Console.WriteLine("##########################");
@@ -472,8 +480,8 @@ namespace MLDotNet_BaseballClassification
             // Retrieve model path
             // TODO: Hardcoded add perscriptive rules engine
             var algorithmTypeName = "GeneralizedAdditiveModels";
-            var loadedModelOnHallOfFameBallot = LoadModel(GetModelPath(algorithmTypeName, false, "OnHallOfFameBallot"));
-            var loadedModelInductedToHallOfFame = LoadModel(GetModelPath(algorithmTypeName, false, "InductedToHallOfFame"));
+            var loadedModelOnHallOfFameBallot = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(_appPath, algorithmTypeName, false, "OnHallOfFameBallot")));
+            var loadedModelInductedToHallOfFame = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(_appPath, algorithmTypeName, false, "InductedToHallOfFame")));
 
             // Create prediction engine
             var predEngineOnHallOfFameBallot = loadedModelOnHallOfFameBallot.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(_mlContext);
@@ -646,10 +654,10 @@ namespace MLDotNet_BaseballClassification
         private static CalibratedBinaryClassificationMetrics GetBinaryClassificationModelMetrics(string labelColumn, string algorithmTypeName, IDataView validationData)
         {
             // Retrieve model path
-            var loadedModelPath = GetModelPath(algorithmTypeName, false, labelColumn);
+            var loadedModelPath = Utilities.GetModelPath(_appPath, algorithmTypeName, false, labelColumn);
 
             // Load model for both prediction types
-            var loadedModel = LoadModel(loadedModelPath);
+            var loadedModel = Utilities.LoadModel(_mlContext, (loadedModelPath));
 
             // Apply the transformation pipeline to the data (i.e. normalization, probability score etc.)
             var transformedData = loadedModel.Transform(validationData);
@@ -663,119 +671,6 @@ namespace MLDotNet_BaseballClassification
             var metrics = _mlContext.BinaryClassification.Evaluate(transformedData, label: labelColumn);
 
             return metrics;
-        }
-
-        /// <summary>
-        /// Get model path (ONNX, or MLNet (zip file)
-        /// </summary>
-        /// <param name="algorithmName"></param>
-        /// <param name="isOnnx"></param>
-        /// <param name="label"></param>
-        /// <returns></returns>
-        private static string GetModelPath(string algorithmName, bool isOnnx, string label)
-        {
-            string modelPathName = string.Empty;
-            string modelName = string.Format("model-{0}-{1}.onnx", algorithmName, label);
-
-            if (isOnnx)
-            {
-                modelPathName = Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}-{1}.onnx", algorithmName, label));
-            }
-            else
-            {
-                modelPathName = Path.Combine(_appPath, "..", "..", "..", "Models", string.Format("model-{0}-{1}.mlnet", algorithmName, label));
-            }
-
-            return modelPathName;
-        }
-
-        /// <summary>
-        /// Gets a baseline pipeline used for all of the models
-        /// </summary>
-        /// <returns></returns>
-        private static EstimatorChain<NormalizingTransformer> GetBaseLinePipeline()
-        {
-            var baselineTransform = _mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", featureColumns)
-                .Append(_mlContext.Transforms.Normalize("Features", "FeaturesBeforeNormalization",
-                NormalizingEstimator.NormalizerMode.MinMax));
-
-            return baselineTransform;
-        }
-
-        /// <summary>
-        /// Load a ML.NET model from a persisted file location
-        /// </summary>
-        /// <param name="loadedModelPath"></param>
-        /// <returns></returns>
-        private static TransformerChain<ITransformer> LoadModel(string loadedModelPath)
-        {
-            ITransformer loadedModel;
-            using (var stream = File.OpenRead(loadedModelPath))
-            {
-                loadedModel = _mlContext.Model.Load(stream);
-            }
-            
-            // Cast the loaded model to a transformer chain
-            // This allows for interacting with the LastTransformer property
-            TransformerChain<ITransformer> transfomerChain = (TransformerChain<ITransformer>) loadedModel;
-
-            return transfomerChain;
-        }
-
-        /// <summary>
-        /// Save a model using default ML.NET persistance
-        /// </summary>
-        /// <param name="algorithmName"></param>
-        /// <param name="labelColumn"></param>
-        /// <param name="model"></param>
-        private static void SaveModel(string algorithmName, string labelColumn, ITransformer model)
-        {
-            var modelPath = GetModelPath(algorithmName, false, labelColumn);
-
-            // Write out the model
-            using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
-            {
-                _mlContext.Model.Save(model, fileStream);
-            }
-        }
-
-        /// <summary>
-        /// Save a model using ONNX persistance ML.NET transofrms
-        /// Note: Use Netron Viewer to open up models
-        /// </summary>
-        /// <param name="algorithmName"></param>
-        /// <param name="labelColumn"></param>
-        /// <param name="model"></param>
-        /// <param name="mlContext"></param>
-        /// <param name="inputData"></param>
-        private static void SaveOnnxModel(string algorithmName, string labelColumn, ITransformer model, MLContext mlContext, IDataView inputData)
-        {
-            var modelPath = GetModelPath(algorithmName, true, labelColumn);
-
-            if (algorithmName != "AveragedPerceptron" && algorithmName != "GeneralizedAdditiveModels" && 
-                algorithmName != "LinearSupportVectorMachines" && algorithmName != "FieldAwareFactorization")
-            {
-                var protoBufModel = mlContext.Model.ConvertToOnnx(model, inputData);
-
-                // Write out the model (ONNX)
-                using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
-                {
-                    protoBufModel.WriteTo(fileStream);
-                }
-            }
-        }
-
-        private static int GetMostContributingFeature(float[] featureContributions)
-        {
-            int index = 0;
-            float currentValue = float.NegativeInfinity;
-            for (int i = 0; i < featureContributions.Length; i++)
-                if (featureContributions[i] > currentValue)
-                {
-                    currentValue = featureContributions[i];
-                    index = i;
-                }
-            return index;
         }
     }
 }
