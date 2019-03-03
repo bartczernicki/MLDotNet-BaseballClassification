@@ -66,7 +66,7 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("##########################\n");
 
             // Set the seed explicitly for reproducability (models will be built with consistent results)
-            _mlContext = new MLContext(seed: 100);
+            _mlContext = new MLContext(seed: 200);
 
             // Read the data from a text file
             var dataTrain = _mlContext.Data.ReadFromTextFile<MLBBaseballBatter>(path: _trainDataPath,
