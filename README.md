@@ -15,3 +15,6 @@ The model building job includes the following features:
 * Loads the persisted models from storage and performs model explainability
 * Applies simple perscriptive/rules engine to select the "best model"
 * Selected "best model" is used for inference on new ficticious baseball player careers (to verify overall performance)
+
+Requirements:
+* Visual Studio 2017, .NET Core, ML.NET v.10+
