@@ -1,12 +1,15 @@
 ﻿using Google.Protobuf;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
-using Microsoft.ML.Core.Data;
 using Microsoft.ML.Data;
-using Microsoft.ML.Transforms.Normalizers;
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.ML.Model.OnnxConverter;
+using Microsoft.ML.Tools;
+using Microsoft.ML.Trainers;
+using Microsoft.ML.Transforms;
+using Newtonsoft.Json;
 
 
 namespace MLDotNet_BaseballClassification
@@ -103,11 +106,11 @@ namespace MLDotNet_BaseballClassification
         /// Gets a baseline pipeline used for all of the models
         /// </summary>
         /// <returns></returns>
-        public static EstimatorChain<NormalizingTransformer> GetBaseLinePipeline(MLContext mlContext, string[] featureColumns)
+        public static EstimatorChain<Microsoft.ML.Transforms.NormalizingTransformer> GetBaseLinePipeline(MLContext mlContext, string[] featureColumns)
         {
             var baselineTransform = mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", featureColumns)
-                .Append(mlContext.Transforms.Normalize("Features", "FeaturesBeforeNormalization",
-                NormalizingEstimator.NormalizerMode.MinMax));
+                .Append(mlContext.Transforms.Normalize("Features", "FeaturesBeforeNormalization", Microsoft.ML.Transforms.NormalizingEstimator.NormalizerMode.MinMax));
+
 
             return baselineTransform;
         }
@@ -164,12 +167,13 @@ namespace MLDotNet_BaseballClassification
 
             if (SupportsOnnxPersistance(algorithmName))
             {
-                var protoBufModel = mlContext.Model.ConvertToOnnx(model, inputData);
+                // var protoBufModel = mlContext.Model.ConvertToOnnx(model, inputData, 
 
                 // Persist the model (ONNX)
                 using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
                 {
-                    protoBufModel.WriteTo(fileStream);
+                    mlContext.Model.ConvertToOnnx(model, inputData, fileStream);
+                    //protoBufModel.WriteTo(fileStream);
                 }
             }
         }
