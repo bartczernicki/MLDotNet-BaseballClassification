@@ -414,6 +414,7 @@ namespace MLDotNet_BaseballClassification
                     Console.WriteLine("Precision:                " + Math.Round(binaryClassificationMetrics.PositivePrecision, 4).ToString());
                     Console.WriteLine("Recall:                   " + Math.Round(binaryClassificationMetrics.PositiveRecall, 4).ToString());
                     Console.WriteLine("Accuracy:                 " + Math.Round(binaryClassificationMetrics.Accuracy, 4).ToString());
+                    Console.WriteLine("LogLoss:                  " + Math.Round(binaryClassificationMetrics.LogLoss, 4).ToString());
                     Console.WriteLine("**************************");
 
                     var loadedModel = Utilities.LoadModel(_mlContext, Utilities.GetModelPath(_appPath, algorithmName: algorithmsForModelExplainability[i], isOnnx: false, label: labelColumns[j]));
