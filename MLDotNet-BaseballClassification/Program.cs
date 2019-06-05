@@ -58,9 +58,9 @@ namespace MLDotNet_BaseballClassification
 
             #region Step 1) ML.NET Setup & Load Data
 
-            Console.WriteLine("##########################");
-            Console.WriteLine("Step 1: Load Data...");
-            Console.WriteLine("##########################\n");
+            Console.WriteLine("###############################");
+            Console.WriteLine("Step 1: Load Data from files...");
+            Console.WriteLine("###############################\n");
 
             // Set the seed explicitly for reproducability (models will be built with consistent results)
             _mlContext = new MLContext(seed: 200);
@@ -71,7 +71,7 @@ namespace MLDotNet_BaseballClassification
             var dataValidation = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _validationDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
 
-            // Data Schema
+            // Retrieve Data Schema
             var dataSchema = dataTrain.Schema;
 
             #if DEBUG
@@ -94,9 +94,9 @@ namespace MLDotNet_BaseballClassification
             // It is best practice to always provide hyperparameters explicitly in order to have historical reproducability
             // as the ML.NET API evolves.
            
-            Console.WriteLine("##########################");
+            Console.WriteLine("###############################");
             Console.WriteLine("Step 2: Train Models...");
-            Console.WriteLine("##########################\n");
+            Console.WriteLine("###############################\n");
 
             /* LIGHTGBM MODELS */
             Console.WriteLine("Training...LightGbm Models.");
@@ -396,9 +396,9 @@ namespace MLDotNet_BaseballClassification
 
             #region Step 3) Report Performance Metrics
 
-            Console.WriteLine("##########################");
+            Console.WriteLine("###############################");
             Console.WriteLine("Step 3: Report Metrics...");
-            Console.WriteLine("##########################\n");
+            Console.WriteLine("###############################\n");
 
             for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
             {
@@ -504,9 +504,9 @@ namespace MLDotNet_BaseballClassification
         
             #region Step 4) New Predictions - Using Ficticious Player Data
 
-            Console.WriteLine("##########################");
+            Console.WriteLine("###############################");
             Console.WriteLine("Step 4: New Predictions...");
-            Console.WriteLine("##########################\n");
+            Console.WriteLine("###############################\n");
 
             // Set algorithm type to use for predictions
             // Retrieve model path
@@ -595,6 +595,7 @@ namespace MLDotNet_BaseballClassification
                 MajorLeaguePlayerOfTheYearAwards = 2f,
                 TB = 7000f
             };
+
             var batters = new List<MLBBaseballBatter> { badMLBBatter, averageMLBBatter, greatMLBBatter };
             // Convert the list to an IDataView
             var newPredictionsData = _mlContext.Data.LoadFromEnumerable(batters);
@@ -609,6 +610,7 @@ namespace MLDotNet_BaseballClassification
 
             // Report the results
             Console.WriteLine("Algorithm Used for Model Prediction: " + algorithmTypeName);
+            Console.WriteLine("\n");
             Console.WriteLine("Bad Baseball Player Prediction");
             Console.WriteLine("------------------------------");
             Console.WriteLine("On HOF Ballot Prediction: " + predBadOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predBadOnHallOfFameBallot.Probability);
