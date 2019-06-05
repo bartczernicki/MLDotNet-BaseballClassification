@@ -1,15 +1,8 @@
-﻿using Google.Protobuf;
-using Microsoft.Data.DataView;
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using Microsoft.ML.Data;
 using System;
 using System.IO;
 using System.Linq;
-using Microsoft.ML.Model.OnnxConverter;
-using Microsoft.ML.Tools;
-using Microsoft.ML.Trainers;
-using Microsoft.ML.Transforms;
-using Newtonsoft.Json;
 
 
 namespace MLDotNet_BaseballClassification
@@ -40,7 +33,7 @@ namespace MLDotNet_BaseballClassification
             #endif
 
             // Evaluate the model metrics using validation data
-            var metrics = mlContext.BinaryClassification.Evaluate(transformedData, label: labelColumn);
+            var metrics = mlContext.BinaryClassification.Evaluate(transformedData, labelColumnName: labelColumn);
 
             return metrics;
         }
@@ -71,7 +64,7 @@ namespace MLDotNet_BaseballClassification
             #endif
 
             // Evaluate the model metrics using validation data
-            var metrics = mlContext.Regression.Evaluate(transformedData, label: labelColumn);
+            var metrics = mlContext.Regression.Evaluate(transformedData, labelColumnName: labelColumn);
 
             return metrics;
         }
@@ -109,7 +102,7 @@ namespace MLDotNet_BaseballClassification
         public static EstimatorChain<Microsoft.ML.Transforms.NormalizingTransformer> GetBaseLinePipeline(MLContext mlContext, string[] featureColumns)
         {
             var baselineTransform = mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", featureColumns)
-                .Append(mlContext.Transforms.Normalize("Features", "FeaturesBeforeNormalization", Microsoft.ML.Transforms.NormalizingEstimator.NormalizerMode.MinMax));
+                .Append(mlContext.Transforms.NormalizeMinMax("Features", "FeaturesBeforeNormalization"));
 
 
             return baselineTransform;
@@ -123,9 +116,11 @@ namespace MLDotNet_BaseballClassification
         public static TransformerChain<ITransformer> LoadModel(MLContext mlContext, string loadedModelPath)
         {
             ITransformer loadedModel;
+            DataViewSchema schema;
+
             using (var stream = File.OpenRead(loadedModelPath))
             {
-                loadedModel = mlContext.Model.Load(stream);
+                loadedModel = mlContext.Model.Load(stream, out schema);
             }
 
             // Cast the loaded model to a transformer chain
@@ -141,14 +136,14 @@ namespace MLDotNet_BaseballClassification
         /// <param name="algorithmName"></param>
         /// <param name="labelColumn"></param>
         /// <param name="model"></param>
-        public static void SaveModel(string appPath, MLContext mlContext, string algorithmName, string labelColumn, ITransformer model)
+        public static void SaveModel(string appPath, MLContext mlContext, DataViewSchema schema, string algorithmName, string labelColumn, ITransformer model)
         {
             var modelPath = GetModelPath(appPath, algorithmName, false, labelColumn);
 
             // Write out the model
             using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                mlContext.Model.Save(model, fileStream);
+                mlContext.Model.Save(model, schema, fileStream);
             }
         }
 
