@@ -182,7 +182,9 @@ namespace MLDotNet_BaseballClassification
         {
             var algorithmsThatSupportOnnxPersistance = new string[]
                 {"FastForest", "FastTree", "LightGbm", "LogisticRegression",
-                "StochasticDualCoordinateAscent", "StochasticGradientDescent"};
+                "StochasticGradientDescentCalibrated"
+               // , "StochasticGradientDescentNonCalibrated"
+                };
 
             // Determine if algorithm is in the supported ONNX array
             var supportsOnnxPersitance = algorithmsThatSupportOnnxPersistance.Any(algorithmName.Contains);
