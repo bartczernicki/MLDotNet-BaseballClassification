@@ -52,11 +52,14 @@ namespace MLDotNet_BaseballClassification
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            Console.WriteLine("Starting Baseball Predictions - Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.3");
+            Console.WriteLine("Starting Baseball Predictions - Training Model Job");
+            Console.WriteLine("Using ML.NET - Version 1.3.1");
             Console.WriteLine("This job will build a series of models that will predict both:");
             Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
             Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).\n");
+            Console.WriteLine("Based on a batter's summarized career batting statistics.\n");
+            Console.WriteLine("Note: The goal is to build a 'good enough' set of models.\n");
+            Console.WriteLine("Note: For better models advanced historical scaling and features can be performed.\n");
 
             #region Step 1) ML.NET Setup & Load Data
 
