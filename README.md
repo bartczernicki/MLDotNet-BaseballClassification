@@ -19,4 +19,4 @@ The model building job includes the following features:
 Requirements:
 * Visual Studio 2017, .NET Core, ML.NET v1.3.1
 
-![Cognitive Services UI Demo](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/TrainingJob.png)
+![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/TrainingJob.png)
