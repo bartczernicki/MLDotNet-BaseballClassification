@@ -17,4 +17,6 @@ The model building job includes the following features:
 * Selected "best model" is used for inference on new ficticious baseball player careers (to verify overall performance)
 
 Requirements:
-* Visual Studio 2017, .NET Core, ML.NET v1.2
+* Visual Studio 2017, .NET Core, ML.NET v1.3.1
+
+![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/TrainingJob.png)
