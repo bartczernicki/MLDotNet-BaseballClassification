@@ -53,7 +53,7 @@ namespace MLDotNet_BaseballClassification
             sw.Start();
 
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.3.1");
+            Console.WriteLine("Using ML.NET - Version 1.4");
             Console.WriteLine("This job will build a series of models that will predict both:");
             Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
             Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).\n");
