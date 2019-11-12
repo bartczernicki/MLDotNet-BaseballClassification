@@ -20,6 +20,7 @@ namespace MLDotNet_BaseballClassification
         private static string _trainDataPath => Path.Combine(_appPath, "..", "..", "..", "Data", "BaseballHOFTrainingv2.csv");
         private static string _validationDataPath => Path.Combine(_appPath, "..", "..", "..", "Data", "BaseballHOFValidationv2.csv");
 
+        // Thread-safe ML Context
         private static MLContext _mlContext;
 
         private static string _labelColunmn = "OnHallOfFameBallot";
