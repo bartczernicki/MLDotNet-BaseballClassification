@@ -81,15 +81,15 @@ namespace MLDotNet_BaseballClassification
             // Model persistance convention used:
             // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
             string modelPathName = string.Empty;
-            string modelName = string.Format("model-{0}-{1}.onnx", algorithmName, label);
+            string modelName = string.Format("{0}-{1}.onnx", label, algorithmName);
 
             if (isOnnx)
             {
-                modelPathName = Path.Combine(appPath, "..", "..", "..", "Models", string.Format("model-{0}-{1}.onnx", algorithmName, label));
+                modelPathName = Path.Combine(appPath, "..", "..", "..", "Models", string.Format("{0}-{1}.onnx", label, algorithmName));
             }
             else
             {
-                modelPathName = Path.Combine(appPath, "..", "..", "..", "Models", string.Format("model-{0}-{1}.mlnet", algorithmName, label));
+                modelPathName = Path.Combine(appPath, "..", "..", "..", "Models", string.Format("{0}-{1}.mlnet", label, algorithmName));
             }
 
             return modelPathName;

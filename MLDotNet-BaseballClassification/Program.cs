@@ -53,20 +53,27 @@ namespace MLDotNet_BaseballClassification
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            Console.Title = "Baseball Predictions - Training Model Job";
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
             Console.WriteLine("Using ML.NET - Version 1.4");
+            Console.WriteLine();
+            Console.ResetColor();
             Console.WriteLine("This job will build a series of models that will predict both:");
             Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
-            Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).\n");
-            Console.WriteLine("Based on a batter's summarized career batting statistics.\n");
-            Console.WriteLine("Note: The goal is to build a 'good enough' set of models.\n");
-            Console.WriteLine("Note: For better models advanced historical scaling and features can be performed.\n");
+            Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).");
+            Console.WriteLine("Based on an MLB batter's summarized career batting statistics.\n");
+            Console.WriteLine("Note: The goal is to build a 'good enough' set of models & showcase the ML.NET framework.");
+            Console.WriteLine("Note: For better models advanced historical scaling and features should be performed.");
+            Console.WriteLine();
 
             #region Step 1) ML.NET Setup & Load Data
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
             Console.WriteLine("Step 1: Load Data from files...");
             Console.WriteLine("###############################\n");
+            Console.ResetColor();
 
             // Set the seed explicitly for reproducability (models will be built with consistent results)
             _mlContext = new MLContext(seed: 200);
@@ -99,10 +106,12 @@ namespace MLDotNet_BaseballClassification
             // Default parameters were used in optimizing for large data sets.
             // It is best practice to always provide hyperparameters explicitly in order to have historical reproducability
             // as the ML.NET API evolves.
-           
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
             Console.WriteLine("Step 2: Train Models...");
             Console.WriteLine("###############################\n");
+            Console.ResetColor();
 
             /* LIGHTGBM MODELS */
             Console.WriteLine("Training...LightGbm Models.");
@@ -224,7 +233,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineFastTreeOnHallOfFameBallot =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn, learningRate: 0.05, numberOfTrees: 500)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeOnHallOfFameBallot = learningPipelineFastTreeOnHallOfFameBallot.Fit(cachedTrainData);
@@ -236,7 +245,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineFastTreeInductedToHallOfFame =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn, learningRate: 0.05, numberOfTrees: 500)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeInductedToHallOfFame = learningPipelineFastTreeInductedToHallOfFame.Fit(cachedTrainData);
@@ -404,9 +413,11 @@ namespace MLDotNet_BaseballClassification
 
             #region Step 3) Report Performance Metrics
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
             Console.WriteLine("Step 3: Report Metrics...");
             Console.WriteLine("###############################\n");
+            Console.ResetColor();
 
             for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
             {
@@ -513,12 +524,14 @@ namespace MLDotNet_BaseballClassification
 
 
             #endregion
-        
+
             #region Step 4) New Predictions - Using Ficticious Player Data
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
             Console.WriteLine("Step 4: New Predictions...");
             Console.WriteLine("###############################\n");
+            Console.ResetColor();
 
             // Set algorithm type to use for predictions
             // Retrieve model path
@@ -621,7 +634,7 @@ namespace MLDotNet_BaseballClassification
             var predGreatInductedToHallOfFame = predEngineInductedToHallOfFame.Predict(greatMLBBatter);
 
             // Report the results
-            Console.WriteLine("Algorithm Used for Model Prediction: " + algorithmTypeName);
+            Console.WriteLine("Algorithm Used for sample Model Prediction: " + algorithmTypeName);
             Console.WriteLine("\n");
             Console.WriteLine("Bad Baseball Player Prediction");
             Console.WriteLine("------------------------------");
@@ -686,7 +699,8 @@ namespace MLDotNet_BaseballClassification
 
             // End of job, report time
             Console.WriteLine();
-            Console.WriteLine(string.Format("Model building job finished in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(string.Format("Finished Baseball Predictions - Training Model Job in: {0} seconds", Math.Round(sw.Elapsed.TotalSeconds, 2)));
             Console.ReadLine();
         }
     }
