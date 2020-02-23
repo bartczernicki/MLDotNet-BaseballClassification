@@ -1,4 +1,6 @@
 # MLDotNet-BaseballClassification
+![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/images/BaseballPredictionsTrainingModelJob.gif)
+
 A .Net Core model building job that builds several models using MLB Baseball data from 1876 - 2017.  
 
 The outcome are two classification supervised learning predictions:
@@ -19,4 +21,3 @@ The model building job includes the following features:
 Requirements:
 * Visual Studio 2017, .NET Core, ML.NET v1.4
 
-![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/images/BaseballPredictionsTrainingModelJob.gif)
