@@ -177,7 +177,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineAveragedPerceptronOnHallOfFameBallot =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumnName: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumnName: _labelColunmn, numberOfIterations: 10)
                 );
             // Fit (build a Machine Learning Model)
             var modelAveragedPerceptronOnHallOfFameBallot = learningPipelineAveragedPerceptronOnHallOfFameBallot.Fit(cachedTrainData);
@@ -233,7 +233,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineFastTreeOnHallOfFameBallot =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn, learningRate: 0.05, numberOfTrees: 500)
+                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn, learningRate: 0.01, numberOfTrees: 500)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeOnHallOfFameBallot = learningPipelineFastTreeOnHallOfFameBallot.Fit(cachedTrainData);
@@ -245,7 +245,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineFastTreeInductedToHallOfFame =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn, learningRate: 0.05, numberOfTrees: 500)
+                _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: _labelColunmn, learningRate: 0.01, numberOfTrees: 500)
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeInductedToHallOfFame = learningPipelineFastTreeInductedToHallOfFame.Fit(cachedTrainData);
@@ -383,7 +383,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineLinearSupportVectorMachinesOnHallOfFameBallot =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.LinearSvm(labelColumnName: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.LinearSvm(labelColumnName: _labelColunmn, numberOfIterations: 10)
                 );
             // Fit (build a Machine Learning Model)
             var modelLinearSupportVectorMachinesOnHallOfFameBallot = learningPipelineLinearSupportVectorMachinesOnHallOfFameBallot.Fit(cachedTrainData);
