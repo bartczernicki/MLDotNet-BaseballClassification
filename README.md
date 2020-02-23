@@ -19,4 +19,4 @@ The model building job includes the following features:
 Requirements:
 * Visual Studio 2017, .NET Core, ML.NET v1.4
 
-![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/TrainingJob.png)
+![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/images/BaseballPredictionsTrainingModelJob.gif)
