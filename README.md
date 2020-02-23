@@ -1,4 +1,4 @@
-# MLDotNet-BaseballClassification
+# Baseball Predictions - Training Model Job
 ![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/images/BaseballPredictionsTrainingModelJob.gif)
 
 A .Net Core model building job that builds several models using MLB Baseball data from 1876 - 2017.  
