@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.ML" Version="1.4.0" />
     <PackageReference Include="Microsoft.ML.LightGBM" Version="1.4.0" />
     <PackageReference Include="Microsoft.ML.OnnxConverter" Version="0.16.0" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.1.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.2.0" />
     <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.4.0" />
   </ItemGroup>
 
