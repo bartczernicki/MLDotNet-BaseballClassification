@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Google.Protobuf;
-using Microsoft.ML;
-using Microsoft.ML.Data;
-using System.Threading.Tasks;
-
-using System.Diagnostics;
-using Microsoft.ML.Model;
+﻿using Microsoft.ML;
 using Microsoft.ML.Trainers;
-using System.Collections.Immutable;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace MLDotNet_BaseballClassification
 {
@@ -32,8 +25,8 @@ namespace MLDotNet_BaseballClassification
         private static string[] featureColumns = new string[] {
             "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
             "BattingAverage", "SluggingPct", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
-            "MajorLeaguePlayerOfTheYearAwards", "TB" };
-        
+            "MajorLeaguePlayerOfTheYearAwards", "TB", "TotalPlayerAwards" };
+
         // List of supervised learning labels
         // Useage: At least one must be left
         private static string[] labelColumns = new string[] { "OnHallOfFameBallot", "InductedToHallOfFame" };

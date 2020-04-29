@@ -68,10 +68,13 @@ namespace MLDotNet_BaseballClassification
         [LoadColumn(19), ColumnName("TB")]
         public float TB { get; set; }
 
-        [LoadColumn(20), ColumnName("LastYearPlayed")]
+        [LoadColumn(20), ColumnName("TotalPlayerAwards")]
+        public float TotalPlayerAwards { get; set; }
+
+        [LoadColumn(21), ColumnName("LastYearPlayed")]
         public float LastYearPlayed { get; set; }
 
-        [LoadColumn(21), ColumnName("ID")]
+        [LoadColumn(22), ColumnName("ID")]
         public float ID { get; set; }
     }
 
