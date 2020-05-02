@@ -15,10 +15,10 @@ namespace MLDotNet_BaseballClassification
         /// <param name="algorithmTypeName"></param>
         /// <param name="validationData"></param>
         /// <returns></returns>
-        public static CalibratedBinaryClassificationMetrics GetBinaryClassificationModelMetrics(string appPath, MLContext mlContext, string labelColumn, string algorithmTypeName, IDataView validationData)
+        public static CalibratedBinaryClassificationMetrics GetBinaryClassificationModelMetrics(bool isFinalModel, string appPath, MLContext mlContext, string labelColumn, string algorithmTypeName, IDataView validationData)
         {
             // Retrieve model path
-            var loadedModelPath = Utilities.GetModelPath(appPath, algorithmTypeName, false, labelColumn);
+            var loadedModelPath = Utilities.GetModelPath(appPath, algorithmTypeName, false, labelColumn, isFinalModel);
 
             // Load model for both prediction types
             var loadedModel = LoadModel(mlContext, loadedModelPath);
@@ -49,7 +49,7 @@ namespace MLDotNet_BaseballClassification
         public static RegressionMetrics GetRegressionModelMetrics(string appPath, MLContext mlContext, string labelColumn, string algorithmTypeName, IDataView validationData)
         {
             // Retrieve model path
-            var loadedModelPath = Utilities.GetModelPath(appPath, algorithmTypeName, false, labelColumn);
+            var loadedModelPath = Utilities.GetModelPath(appPath, algorithmTypeName, false, labelColumn, true);
 
             // Load model for both prediction types
             var loadedModel = LoadModel(mlContext, loadedModelPath);
@@ -75,20 +75,21 @@ namespace MLDotNet_BaseballClassification
         /// <param name="isOnnx"></param>
         /// <param name="label"></param>
         /// <returns></returns>
-        public static string GetModelPath(string appPath, string algorithmName, bool isOnnx, string label)
+        public static string GetModelPath(string appPath, string algorithmName, bool isOnnx, string label, bool isFinalModel)
         {
             // Model persistance convention used:
             // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
             string modelPathName = string.Empty;
             string modelName = string.Format("{0}-{1}.onnx", label, algorithmName);
+            string modelFolder = isFinalModel ? "Final" : "Test";
 
             if (isOnnx)
             {
-                modelPathName = Path.Combine(appPath, "..", "..", "..", "Models", string.Format("{0}-{1}.onnx", label, algorithmName));
+                modelPathName = Path.Combine(appPath, "..", "..", "..", $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", label, algorithmName));
             }
             else
             {
-                modelPathName = Path.Combine(appPath, "..", "..", "..", "Models", string.Format("{0}-{1}.mlnet", label, algorithmName));
+                modelPathName = Path.Combine(appPath, "..", "..", "..", $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", label, algorithmName));
             }
 
             return modelPathName;
@@ -135,9 +136,9 @@ namespace MLDotNet_BaseballClassification
         /// <param name="algorithmName"></param>
         /// <param name="labelColumn"></param>
         /// <param name="model"></param>
-        public static void SaveModel(string appPath, MLContext mlContext, DataViewSchema schema, string algorithmName, string labelColumn, ITransformer model)
+        public static void SaveModel(bool isFinalModel, string appPath, MLContext mlContext, DataViewSchema schema, string algorithmName, string labelColumn, ITransformer model)
         {
-            var modelPath = GetModelPath(appPath, algorithmName, false, labelColumn);
+            var modelPath = GetModelPath(appPath, algorithmName, false, labelColumn, isFinalModel);
 
             // Write out the model
             using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -155,9 +156,9 @@ namespace MLDotNet_BaseballClassification
         /// <param name="model"></param>
         /// <param name="mlContext"></param>
         /// <param name="inputData"></param>
-        public static void SaveOnnxModel(string appPath, string algorithmName, string labelColumn, ITransformer model, MLContext mlContext, IDataView inputData)
+        public static void SaveOnnxModel(bool isFinalModel, string appPath, string algorithmName, string labelColumn, ITransformer model, MLContext mlContext, IDataView inputData)
         {
-            var modelPath = GetModelPath(appPath, algorithmName, true, labelColumn);
+            var modelPath = GetModelPath(appPath, algorithmName, true, labelColumn, isFinalModel);
 
             if (SupportsOnnxPersistance(algorithmName))
             {
