@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,14 @@ namespace MLDotNet_BaseballClassification
     {
         private static string _appPath => Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
         private static string _trainDataPath => Path.Combine(_appPath, "..", "..", "..", "Data", "BaseballHOFTrainingv2.csv");
-        private static string _validationDataPath => Path.Combine(_appPath, "..", "..", "..", "Data", "BaseballHOFValidationv2.csv");
+        private static string _testDataPath => Path.Combine(_appPath, "..", "..", "..", "Data", "BaseballHOFTestv2.csv");
         private static string _fullDataPath => Path.Combine(_appPath, "..", "..", "..", "Data", "BaseballHOFFull.csv");
+        private static string _performanceMetricsTrainTestModels => Path.Combine(_appPath, "..", "..", "..", "ModelPerformanceMetrics", "PerformanceMetricsTrainTestModels.csv");
 
         // Thread-safe ML Context
         private static MLContext _mlContext;
+        // Set seed to static value for re-producable model results (or DateTime for pseudo-random)
+        private static int seed = 100;
 
         private static string _labelColunmn = "OnHallOfFameBallot";
 
@@ -70,12 +74,12 @@ namespace MLDotNet_BaseballClassification
             Console.ResetColor();
 
             // Set the seed explicitly for reproducability (models will be built with consistent results)
-            _mlContext = new MLContext(seed: 200);
+            _mlContext = new MLContext(seed: seed);
 
             // Read the training/validation data from a text file
             var dataTrain = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _trainDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
-            var dataValidation = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _validationDataPath,
+            var dataTest = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _testDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
             var dataFull = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _fullDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
@@ -84,15 +88,18 @@ namespace MLDotNet_BaseballClassification
             var dataSchema = dataTrain.Schema;
 
             #if DEBUG
-            // Debug Only: Preview the training/validation data
+            // Debug Only: Preview the training/test data
             var dataTrainPreview = dataTrain.Preview();
-            var dataValidationPreview = dataValidation.Preview();
+            var dataTestPreview = dataTest.Preview();
             #endif
 
             // Cache the loaded data
             var cachedTrainData = _mlContext.Data.Cache(dataTrain);
-            var cachedValidationData = _mlContext.Data.Cache(dataValidation);
+            var cachedTestData = _mlContext.Data.Cache(dataTest);
             var cachedFullData = _mlContext.Data.Cache(dataFull);
+
+            // Delete the Performance Metrics File(s)
+            File.Delete(_performanceMetricsTrainTestModels);
 
             #endregion
 
@@ -127,6 +134,7 @@ namespace MLDotNet_BaseballClassification
             Utilities.SaveOnnxModel(false, _appPath, "LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallot, _mlContext, cachedTrainData);
             Utilities.SaveModel(true, _appPath, _mlContext, dataSchema, "LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallotFull);
             Utilities.SaveOnnxModel(true, _appPath, "LightGbm", _labelColunmn, modelLightGbmOnHallOfFameBallotFull, _mlContext, cachedFullData);
+
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
@@ -427,26 +435,53 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("###############################\n");
             Console.ResetColor();
 
-            for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
+            // Write the performance metrics HEADER
+            var performanceMetricsTrainTestHeaderRow = $@"{"AlgorithmName"},{"LabelColumn"},{"Seed"},{"F1Score"},{"AreaUnderPrecisionRecallCurve"},{"AreaUnderRocCurve"},{"PositivePrecision"},{"PositiveRecall"},{"Accuracy"},{"LogLoss"}";
+            using (System.IO.StreamWriter file = File.AppendText(_performanceMetricsTrainTestModels))
+            {
+                file.WriteLine(performanceMetricsTrainTestHeaderRow);
+            }
+
+            for (int i = 1; i < algorithmsForModelExplainability.Length; i++)
             {
                 for (int j = 0; j < labelColumns.Length; j++)
                 {
+                    // TRAIN/TEST MODEL PERFORMANCE METRICS
                     var isFinalModel = false;
-                    var binaryClassificationMetrics = Utilities.GetBinaryClassificationModelMetrics(isFinalModel, _appPath, _mlContext, labelColumns[j], algorithmsForModelExplainability[i], cachedValidationData);
+                    var binaryClassificationMetrics = Utilities.GetBinaryClassificationModelMetrics(isFinalModel, _appPath, _mlContext, labelColumns[j], algorithmsForModelExplainability[i], cachedTestData);
 
-                    Console.WriteLine("Evaluation Metrics for " + algorithmsForModelExplainability[i] + " | " + labelColumns[j]);
+                    var metricF1Score = Math.Round(binaryClassificationMetrics.F1Score, 4);
+                    var metricAreaUnderPrecisionRecallCurve = Math.Round(binaryClassificationMetrics.AreaUnderPrecisionRecallCurve, 4);
+                    var metricAreaUnderRocCurve = Math.Round(binaryClassificationMetrics.AreaUnderRocCurve, 4);
+                    var metricPositivePrecision = Math.Round(binaryClassificationMetrics.PositivePrecision, 4);
+                    var metricPositiveRecall = Math.Round(binaryClassificationMetrics.PositiveRecall, 4);
+                    var metricAccuracy = Math.Round(binaryClassificationMetrics.Accuracy, 4);
+                    var metricLogLoss = Math.Round(binaryClassificationMetrics.LogLoss, 4);
+
+                    Console.WriteLine("TRAIN/TEST Performance Metrics for " + algorithmsForModelExplainability[i] + " | " + labelColumns[j]);
                     Console.WriteLine("**************************");
-                    Console.WriteLine("F1 Score:                 " + Math.Round(binaryClassificationMetrics.F1Score, 4).ToString());
-                    Console.WriteLine("AUC - ROC Score:          " + Math.Round(binaryClassificationMetrics.AreaUnderRocCurve, 4).ToString());
-                    Console.WriteLine("AUC - Prec/Recall Score:  " + Math.Round(binaryClassificationMetrics.AreaUnderPrecisionRecallCurve, 4).ToString());
-                    Console.WriteLine("Precision:                " + Math.Round(binaryClassificationMetrics.PositivePrecision, 4).ToString());
-                    Console.WriteLine("Recall:                   " + Math.Round(binaryClassificationMetrics.PositiveRecall, 4).ToString());
-                    Console.WriteLine("Accuracy:                 " + Math.Round(binaryClassificationMetrics.Accuracy, 4).ToString());
-                    Console.WriteLine("LogLoss:                  " + Math.Round(binaryClassificationMetrics.LogLoss, 4).ToString());
+                    Console.WriteLine("F1 Score:                 " + metricF1Score);
+                    Console.WriteLine("AUC - Prec/Recall Score:  " + metricAreaUnderPrecisionRecallCurve);
+                    Console.WriteLine("AUC - ROC Score:          " + metricAreaUnderRocCurve);
+                    Console.WriteLine("Precision:                " + metricPositivePrecision);
+                    Console.WriteLine("Recall:                   " + metricPositiveRecall);
+                    Console.WriteLine("Accuracy:                 " + metricAccuracy);
+                    Console.WriteLine("LogLoss:                  " + metricLogLoss);
                     Console.WriteLine("**************************");
+
+                    // Write the performance metrics to file
+                    var performanceMetricsTrainTestRow = $@"{algorithmsForModelExplainability[i]},{labelColumns[j]},{seed},{metricF1Score},{metricAreaUnderPrecisionRecallCurve},{metricAreaUnderRocCurve},{metricPositivePrecision},{metricPositiveRecall},{metricAccuracy},{metricLogLoss}";
+                    using (System.IO.StreamWriter file = File.AppendText(_performanceMetricsTrainTestModels))
+                    {
+                        file.WriteLine(performanceMetricsTrainTestRow);
+                    }
+
+                    // CROSSVALIDATED PERFORMANCE METRICS
+                    // TODO
+
 
                     var loadedModel = Utilities.LoadModel(_mlContext, Utilities.GetModelPath(_appPath, algorithmName: algorithmsForModelExplainability[i], isOnnx: false, label: labelColumns[j], isFinalModel: false));
-                    var transformedModelData = loadedModel.Transform(cachedValidationData);
+                    ITransformer transfomer = (ITransformer) loadedModel;
 
                     ITransformer lModel = loadedModel;
                     //_mlContext.BinaryClassification.PermutationFeatureImportance(lModel, transformedModelData);

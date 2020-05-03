@@ -18,6 +18,19 @@
   <ItemGroup>
     <Folder Include="Models\Final\" />
     <Folder Include="Models\Test\" />
+    <Folder Include="ModelPerformanceMetrics\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\BaseballHOFFull.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\BaseballHOFTestv2.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\BaseballHOFTrainingv2.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -104,7 +104,6 @@ namespace MLDotNet_BaseballClassification
             var baselineTransform = mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", featureColumns)
                 .Append(mlContext.Transforms.NormalizeMinMax("Features", "FeaturesBeforeNormalization"));
 
-
             return baselineTransform;
         }
 
