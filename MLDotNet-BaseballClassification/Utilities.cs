@@ -75,7 +75,7 @@ namespace MLDotNet_BaseballClassification
         /// <param name="isOnnx"></param>
         /// <param name="label"></param>
         /// <returns></returns>
-        public static string GetModelPath(string appPath, string algorithmName, bool isOnnx, string label, bool isFinalModel)
+        public static string GetModelPath(string appFolder, string algorithmName, bool isOnnx, string label, bool isFinalModel)
         {
             // Model persistance convention used:
             // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
@@ -85,11 +85,11 @@ namespace MLDotNet_BaseballClassification
 
             if (isOnnx)
             {
-                modelPathName = Path.Combine(appPath, "..", "..", "..", $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", label, algorithmName));
+                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", label, algorithmName));
             }
             else
             {
-                modelPathName = Path.Combine(appPath, "..", "..", "..", $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", label, algorithmName));
+                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", label, algorithmName));
             }
 
             return modelPathName;
