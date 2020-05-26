@@ -1,9 +1,12 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 
 namespace MLDotNet_BaseballClassification
@@ -12,9 +15,9 @@ namespace MLDotNet_BaseballClassification
     {
         // Set up path locations
         private static string appFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        private static string _trainDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTrainingv2.csv");
-        private static string _testDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTestv2.csv");
-        private static string _fullDataPath => Path.Combine(appFolder, "Data", "BaseballHOFFull.csv");
+        private static string _trainDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTraining.csv");
+        private static string _testDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTest.csv");
+        private static string _fullDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTrainingFull.csv");
         private static string _performanceMetricsTrainTestModels => Path.Combine(appFolder, @"ModelPerformanceMetrics", "PerformanceMetricsTrainTestModels.csv");
 
         // Thread-safe ML Context
@@ -31,7 +34,9 @@ namespace MLDotNet_BaseballClassification
         private static string[] featureColumns = new string[] {
             "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
             "BattingAverage", "SluggingPct", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
-            "MajorLeaguePlayerOfTheYearAwards", "TB", "TotalPlayerAwards" };
+            "MajorLeaguePlayerOfTheYearAwards", "TB", "TotalPlayerAwards"
+        };
+        private static string featureColumnsStringArray = String.Join(",", featureColumns);
 
         // List of supervised learning labels
         // Useage: At least one must be left
@@ -78,12 +83,33 @@ namespace MLDotNet_BaseballClassification
             _mlContext = new MLContext(seed: seed);
 
             // Read the training/validation data from a text file
+            //var dataTrainBatters = File.ReadAllLines(_trainDataPath)
+            //    .Skip(1) // Skip the CSV Header
+            //    .Select(v => MLBBaseballBatter.FromCsv(v))
+            //    .AsQueryable() // Allows for Dyanmic Linq
+            //    .Select("new (" + featureColumnsStringArray + ")")
+            //    .ToDynamicList();
+
             var dataTrain = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _trainDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
             var dataTest = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _testDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
             var dataFull = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _fullDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
+
+            // TODO: REMOVE
+            //dynamic myDynamic = new { PropertyOne = true, PropertyTwo = false };
+            //var test = myDynamic.GetType();
+            //var dynamicList = new List<dynamic>();
+            //dynamicList.Add(myDynamic);
+            //dynamicList.Add(myDynamic);
+            //var test2 = _mlContext.Data.LoadFromEnumerable<dynamic>(dynamicList);
+            //var pre = test2.Preview();
+            //var testD = dataTrainBatters.FirstOrDefault();
+            //Microsoft.ML.Data.SchemaDefinition sd;
+            //var schemaDefinition = SchemaDefinition.Create(testD.GetType());
+            //var test2 = _mlContext.Data.LoadFromEnumerable<dynamic>(dataTrainBatters, schemaDefinition );
+            //var test2preview = test2.Preview();
 
             // Retrieve Data Schema
             var dataSchema = dataTrain.Schema;
@@ -143,6 +169,7 @@ namespace MLDotNet_BaseballClassification
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
                 _mlContext.BinaryClassification.Trainers.LightGbm(labelColumnName: _labelColunmn)
                 );
+
             // Fit (build a Machine Learning Model)
             var modelLightGbmInductedToHallOfFame = learningPipelineLightGbmInductedToHallOfFame.Fit(cachedTrainData);
             var modelLightGbmInductedToHallOfFameFull = learningPipelineLightGbmInductedToHallOfFame.Fit(cachedFullData);
