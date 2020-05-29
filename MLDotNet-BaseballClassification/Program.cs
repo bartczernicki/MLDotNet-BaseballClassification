@@ -60,7 +60,7 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.4");
+            Console.WriteLine("Using ML.NET - Version 1.5");
             Console.WriteLine();
             Console.ResetColor();
             Console.WriteLine("This job will build a series of models that will predict both:");
@@ -247,9 +247,13 @@ namespace MLDotNet_BaseballClassification
                 );
             // Fit (build a Machine Learning Model)
             var modelFastForestOnHallOfFameBallot = learningPipelineFastForestOnHallOfFameBallot.Fit(cachedTrainData);
+            var modelFastForestOnHallOfFameBallotFull = learningPipelineFastForestOnHallOfFameBallot.Fit(cachedFullData);
+
             // Save the model to storage
             Utilities.SaveModel(false, appFolder, _mlContext, dataSchema, "FastForest", _labelColunmn, modelFastForestOnHallOfFameBallot);
             Utilities.SaveOnnxModel(false, appFolder, "FastForest", _labelColunmn, modelFastForestOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(true, appFolder, _mlContext, dataSchema, "FastForest", _labelColunmn, modelFastForestOnHallOfFameBallotFull);
+            Utilities.SaveOnnxModel(true, appFolder, "FastForest", _labelColunmn, modelFastForestOnHallOfFameBallotFull, _mlContext, cachedFullData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
@@ -259,9 +263,13 @@ namespace MLDotNet_BaseballClassification
                 );
             // Fit (build a Machine Learning Model)
             var modelFastForestInductedToHallOfFame = learningPipelineFastForestInductedToHallOfFame.Fit(cachedTrainData);
+            var modelFastForestInductedToHallOfFameFull = learningPipelineFastForestInductedToHallOfFame.Fit(cachedFullData);
+
             // Save the model to storage
             Utilities.SaveModel(false, appFolder, _mlContext, dataSchema, "FastForest", _labelColunmn, modelFastForestInductedToHallOfFame);
             Utilities.SaveOnnxModel(false, appFolder, "FastForest", _labelColunmn, modelFastForestInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(true, appFolder, _mlContext, dataSchema, "FastForest", _labelColunmn, modelFastForestInductedToHallOfFameFull);
+            Utilities.SaveOnnxModel(true, appFolder, "FastForest", _labelColunmn, modelFastForestInductedToHallOfFameFull, _mlContext, cachedTrainData);
 
 
             /* FAST TREE MODELS */
@@ -275,9 +283,12 @@ namespace MLDotNet_BaseballClassification
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeOnHallOfFameBallot = learningPipelineFastTreeOnHallOfFameBallot.Fit(cachedTrainData);
+            var modelFastTreeOnHallOfFameBallotFull = learningPipelineFastTreeOnHallOfFameBallot.Fit(cachedFullData);
             // Save the model to storage
             Utilities.SaveModel(false, appFolder, _mlContext, dataSchema, "FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallot);
             Utilities.SaveOnnxModel(false, appFolder, "FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallot, _mlContext, cachedTrainData);
+            Utilities.SaveModel(true, appFolder, _mlContext, dataSchema, "FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallotFull);
+            Utilities.SaveOnnxModel(true, appFolder, "FastTree", _labelColunmn, modelFastTreeOnHallOfFameBallotFull, _mlContext, cachedFullData);
 
             _labelColunmn = "InductedToHallOfFame";
             // Build simple data pipeline
@@ -287,9 +298,12 @@ namespace MLDotNet_BaseballClassification
                 );
             // Fit (build a Machine Learning Model)
             var modelFastTreeInductedToHallOfFame = learningPipelineFastTreeInductedToHallOfFame.Fit(cachedTrainData);
+            var modelFastTreeInductedToHallOfFameFull = learningPipelineFastTreeInductedToHallOfFame.Fit(cachedFullData);
             // Save the model to storage
             Utilities.SaveModel(false, appFolder, _mlContext, dataSchema, "FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame);
             Utilities.SaveOnnxModel(false, appFolder, "FastTree", _labelColunmn, modelFastTreeInductedToHallOfFame, _mlContext, cachedTrainData);
+            Utilities.SaveModel(true, appFolder, _mlContext, dataSchema, "FastTree", _labelColunmn, modelFastTreeInductedToHallOfFameFull);
+            Utilities.SaveOnnxModel(true, appFolder, "FastTree", _labelColunmn, modelFastTreeInductedToHallOfFameFull, _mlContext, cachedFullData);
 
 
             /* FIELD AWARE FACTORIZATION MODELS */
@@ -608,7 +622,7 @@ namespace MLDotNet_BaseballClassification
             // Set algorithm type to use for predictions
             // Retrieve model path
             // TODO: Hardcoded add perscriptive rules engine
-            var algorithmTypeName = "GeneralizedAdditiveModels";
+            var algorithmTypeName = "FastTree";
             var loadedModelOnHallOfFameBallot = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, algorithmTypeName, false, "OnHallOfFameBallot", true)));
             var loadedModelInductedToHallOfFame = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, algorithmTypeName, false, "InductedToHallOfFame", true)));
 
@@ -724,50 +738,6 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("HOF Inducted Prediction:  " + predGreatInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predGreatInductedToHallOfFame.Probability);
 
             #endregion
-
-
-            // TODO: FINISH
-
-            //var loadedModelPath = GetModelPath("LightGbm", true, "OnHallOfFameBallot");
-            //var session = new InferenceSession(loadedModelPath);
-            //var inputInfo = session.InputMetadata.First();
-            //var outputInfo = session.OutputMetadata.First();
-
-            //VBuffer<float> weights = new VBuffer<float>();
-            //modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model.GetFeatureWeights(ref weights);
-
-            //var transformedNewPredictionsData = modelLogisticRegressionInductedToHallOfFame.Transform(newPredictionsData);
-            //var explainer = _mlContext.Model.Explainability.FeatureContributionCalculation(modelLogisticRegressionInductedToHallOfFame.LastTransformer.Model);
-            //var outputData = explainer.Fit(transformedNewPredictionsData).Transform(transformedNewPredictionsData);
-
-            //var scoringEnumerator = _mlContext.CreateEnumerable<BaseballBatterScoreAndFeatureContribution>(outputData, true).GetEnumerator();
-
-            //int index = 0;
-            //Console.WriteLine("Probability\tScore\tBiggestFeature      \t\tValue\tWeight\tContribution");
-            //while (scoringEnumerator.MoveNext() && index < 4)
-            //{
-            //    var row = scoringEnumerator.Current;
-
-            //    // Get the feature index with the biggest contribution
-            //    var featureOfInterest = GetMostContributingFeature(row.FeatureContributions);
-
-            //    // And the corresponding information about the feature
-            //    var value = row.Features[featureOfInterest];
-            //    var contribution = row.FeatureContributions[featureOfInterest];
-            //    var name = featureColumns[featureOfInterest];
-            //    var weight = weights.GetValues()[featureOfInterest];
-
-            //    Console.WriteLine("{0:0.00}\t{1:0.00}\t\t{2}\t{3:0.00}\t{4:0.00}\t{5:0.00}",
-            //        row.Probability,
-            //        row.Score,
-            //        name,
-            //        value,
-            //        weight,
-            //        contribution
-            //        );
-
-            //    index++;
-            //}
 
             // End of job, report time
             Console.WriteLine();
