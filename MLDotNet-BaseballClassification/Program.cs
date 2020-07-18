@@ -60,10 +60,10 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.5");
+            Console.WriteLine("Using ML.NET - Version 1.5.1");
             Console.WriteLine();
             Console.ResetColor();
-            Console.WriteLine("This job will build a series of models that will predict both:");
+            Console.WriteLine("This training job will build a series of models that will predict both:");
             Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
             Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).");
             Console.WriteLine("Based on an MLB batter's summarized career batting statistics.\n");

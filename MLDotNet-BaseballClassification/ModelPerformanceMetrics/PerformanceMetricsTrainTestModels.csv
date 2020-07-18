@@ -7,5 +7,5 @@ FastTree,OnHallOfFameBallot,100,0.7696,0.879,0.9808,0.8866,0.6798,0.9593,0.1516
 FastTree,InductedToHallOfFame,100,0.8485,0.8923,0.9985,0.875,0.8235,0.996,0.0223
 LightGbm,OnHallOfFameBallot,100,0.7609,0.8616,0.9775,0.8454,0.6917,0.9565,0.212
 LightGbm,InductedToHallOfFame,100,0.806,0.8797,0.9983,0.8182,0.7941,0.9949,0.0306
-StochasticGradientDescentCalibrated,OnHallOfFameBallot,100,0.7376,0.8682,0.9778,0.8624,0.6443,0.9542,0.157
-StochasticGradientDescentCalibrated,InductedToHallOfFame,100,0.7018,0.9052,0.9982,0.8696,0.5882,0.9933,0.024
+StochasticGradientDescentCalibrated,OnHallOfFameBallot,100,0.7376,0.8682,0.9778,0.8624,0.6443,0.9542,0.1569
+StochasticGradientDescentCalibrated,InductedToHallOfFame,100,0.7018,0.9052,0.9982,0.8696,0.5882,0.9933,0.0241
