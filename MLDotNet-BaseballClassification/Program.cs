@@ -1,12 +1,9 @@
 ﻿using Microsoft.ML;
-using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Reflection;
 
 namespace MLDotNet_BaseballClassification
@@ -60,7 +57,7 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.5.1");
+            Console.WriteLine("Using ML.NET - Version 1.5.4");
             Console.WriteLine();
             Console.ResetColor();
             Console.WriteLine("This training job will build a series of models that will predict both:");
