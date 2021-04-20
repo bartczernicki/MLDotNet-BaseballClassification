@@ -12,9 +12,9 @@ namespace MLDotNet_BaseballClassification
     {
         // Set up path locations
         private static string appFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        private static string _trainDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTraining.csv");
-        private static string _testDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTest.csv");
-        private static string _fullDataPath => Path.Combine(appFolder, "Data", "BaseballHOFTrainingFull.csv");
+        private static string _trainDataPath => Path.Combine(appFolder, "Data", "MLBBaseballBattersSplitTraining.csv");
+        private static string _testDataPath => Path.Combine(appFolder, "Data", "MLBBaseballBattersSplitTest.csv");
+        private static string _fullDataPath => Path.Combine(appFolder, "Data", "MLBBaseballBattersFullTraining.csv");
         private static string _performanceMetricsTrainTestModels => Path.Combine(appFolder, @"ModelPerformanceMetrics", "PerformanceMetricsTrainTestModels.csv");
 
         // Thread-safe ML Context
@@ -30,8 +30,8 @@ namespace MLDotNet_BaseballClassification
         // Useage: Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
             "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
-            "BattingAverage", "SluggingPct", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
-            "MajorLeaguePlayerOfTheYearAwards", "TB", "TotalPlayerAwards"
+            "BattingAverage", "SluggingPct", "TB", "TotalPlayerAwards", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
+            "MajorLeaguePlayerOfTheYearAwards"
         };
         private static string featureColumnsStringArray = String.Join(",", featureColumns);
 
@@ -631,7 +631,7 @@ namespace MLDotNet_BaseballClassification
             var badMLBBatter = new MLBBaseballBatter
             {
                 FullPlayerName = "Bad Player",
-                ID = 100f,
+                ID = "Bad101",
                 InductedToHallOfFame = false,
                 LastYearPlayed = 0f,
                 OnHallOfFameBallot = false,
@@ -656,7 +656,7 @@ namespace MLDotNet_BaseballClassification
             var averageMLBBatter = new MLBBaseballBatter
             {
                 FullPlayerName = "Average Player",
-                ID = 100f,
+                ID = "Avg101",
                 InductedToHallOfFame = false,
                 LastYearPlayed = 0f,
                 OnHallOfFameBallot = false,
@@ -681,7 +681,7 @@ namespace MLDotNet_BaseballClassification
             var greatMLBBatter = new MLBBaseballBatter
             {
                 FullPlayerName = "Great Player",
-                ID = 100f,
+                ID = "Great101",
                 InductedToHallOfFame = false,
                 LastYearPlayed = 0f,
                 OnHallOfFameBallot = false,
