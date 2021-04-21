@@ -30,8 +30,9 @@ namespace MLDotNet_BaseballClassification
         // Useage: Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
             "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
-            "BattingAverage", "SluggingPct", "TB", "TotalPlayerAwards", "AllStarAppearances", "MVPs", "TripleCrowns", "GoldGloves",
-            "MajorLeaguePlayerOfTheYearAwards"
+            "BattingAverage", "SluggingPct", "TB", "TotalPlayerAwards", "AllStarAppearances"
+            // Other Features
+            /*, "MVPs", "TripleCrowns", "GoldGloves", "MajorLeaguePlayerOfTheYearAwards"*/
         };
         private static string featureColumnsStringArray = String.Join(",", featureColumns);
 

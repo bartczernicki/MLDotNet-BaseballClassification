@@ -77,19 +77,21 @@ namespace MLDotNet_BaseballClassification
         /// <returns></returns>
         public static string GetModelPath(string appFolder, string algorithmName, bool isOnnx, string label, bool isFinalModel)
         {
+            var modelPrefix = label.Replace("HallOfFame", "HoF");
+
             // Model persistance convention used:
             // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
             string modelPathName = string.Empty;
-            string modelName = string.Format("{0}-{1}.onnx", label, algorithmName);
+            string modelName = string.Format("{0}-{1}.onnx", modelPrefix, algorithmName);
             string modelFolder = isFinalModel ? "Final" : "Test";
 
             if (isOnnx)
             {
-                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", label, algorithmName));
+                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", modelPrefix, algorithmName));
             }
             else
             {
-                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", label, algorithmName));
+                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", modelPrefix, algorithmName));
             }
 
             return modelPathName;

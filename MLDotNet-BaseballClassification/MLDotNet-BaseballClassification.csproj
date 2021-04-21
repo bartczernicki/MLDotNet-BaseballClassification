@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Test\" />
     <Folder Include="ModelPerformanceMetrics\" />
   </ItemGroup>
 
@@ -46,112 +45,136 @@
     <None Update="ModelPerformanceMetrics\PerformanceMetricsTrainTestModels.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Final\InductedToHallOfFame-GeneralizedAdditiveModels.mlnet">
+    <None Update="Models\Final\InductedToHoF-FastForest.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Final\InductedToHallOfFame-LightGbm.mlnet">
+    <None Update="Models\Final\InductedToHoF-FastForest.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Final\InductedToHallOfFame-LightGbm.onnx">
+    <None Update="Models\Final\InductedToHoF-FastTree.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Final\OnHallOfFameBallot-GeneralizedAdditiveModels.mlnet">
+    <None Update="Models\Final\InductedToHoF-FastTree.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Final\OnHallOfFameBallot-LightGbm.mlnet">
+    <None Update="Models\Final\InductedToHoF-GeneralizedAdditiveModels.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Final\OnHallOfFameBallot-LightGbm.onnx">
+    <None Update="Models\Final\InductedToHoF-LightGbm.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-AveragedPerceptron.mlnet">
+    <None Update="Models\Final\InductedToHoF-LightGbm.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-FastForest.mlnet">
+    <None Update="Models\Final\OnHoFBallot-FastForest.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-FastForest.onnx">
+    <None Update="Models\Final\OnHoFBallot-FastForest.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-FastTree.mlnet">
+    <None Update="Models\Final\OnHoFBallot-FastTree.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-FastTree.onnx">
+    <None Update="Models\Final\OnHoFBallot-FastTree.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-FieldAwareFactorization.mlnet">
+    <None Update="Models\Final\OnHoFBallot-GeneralizedAdditiveModels.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-GeneralizedAdditiveModels.mlnet">
+    <None Update="Models\Final\OnHoFBallot-LightGbm.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-LightGbm.mlnet">
+    <None Update="Models\Final\OnHoFBallot-LightGbm.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-LightGbm.onnx">
+    <None Update="Models\Test\InductedToHoF-AveragedPerceptron.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-LinearSupportVectorMachines.mlnet">
+    <None Update="Models\Test\InductedToHoF-FastForest.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-LogisticRegression.mlnet">
+    <None Update="Models\Test\InductedToHoF-FastForest.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-LogisticRegression.onnx">
+    <None Update="Models\Test\InductedToHoF-FastTree.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-StochasticGradientDescentCalibrated.mlnet">
+    <None Update="Models\Test\InductedToHoF-FastTree.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-StochasticGradientDescentCalibrated.onnx">
+    <None Update="Models\Test\InductedToHoF-FieldAwareFactorization.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHallOfFame-StochasticGradientDescentNonCalibrated.mlnet">
+    <None Update="Models\Test\InductedToHoF-GeneralizedAdditiveModels.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-AveragedPerceptron.mlnet">
+    <None Update="Models\Test\InductedToHoF-LightGbm.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-FastForest.mlnet">
+    <None Update="Models\Test\InductedToHoF-LightGbm.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-FastForest.onnx">
+    <None Update="Models\Test\InductedToHoF-LinearSupportVectorMachines.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-FastTree.mlnet">
+    <None Update="Models\Test\InductedToHoF-LogisticRegression.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-FastTree.onnx">
+    <None Update="Models\Test\InductedToHoF-LogisticRegression.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-FieldAwareFactorization.mlnet">
+    <None Update="Models\Test\InductedToHoF-StochasticGradientDescentCalibrated.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-GeneralizedAdditiveModels.mlnet">
+    <None Update="Models\Test\InductedToHoF-StochasticGradientDescentCalibrated.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-LightGbm.mlnet">
+    <None Update="Models\Test\InductedToHoF-StochasticGradientDescentNonCalibrated.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-LightGbm.onnx">
+    <None Update="Models\Test\OnHoFBallot-AveragedPerceptron.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-LinearSupportVectorMachines.mlnet">
+    <None Update="Models\Test\OnHoFBallot-FastForest.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-LogisticRegression.mlnet">
+    <None Update="Models\Test\OnHoFBallot-FastForest.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-LogisticRegression.onnx">
+    <None Update="Models\Test\OnHoFBallot-FastTree.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-StochasticGradientDescentCalibrated.mlnet">
+    <None Update="Models\Test\OnHoFBallot-FastTree.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-StochasticGradientDescentCalibrated.onnx">
+    <None Update="Models\Test\OnHoFBallot-FieldAwareFactorization.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\OnHallOfFameBallot-StochasticGradientDescentNonCalibrated.mlnet">
+    <None Update="Models\Test\OnHoFBallot-GeneralizedAdditiveModels.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-LightGbm.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-LightGbm.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-LinearSupportVectorMachines.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-LogisticRegression.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-LogisticRegression.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-StochasticGradientDescentCalibrated.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-StochasticGradientDescentCalibrated.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Test\OnHoFBallot-StochasticGradientDescentNonCalibrated.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
