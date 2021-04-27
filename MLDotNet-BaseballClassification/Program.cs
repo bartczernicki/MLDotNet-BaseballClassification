@@ -386,18 +386,6 @@ namespace MLDotNet_BaseballClassification
             Utilities.SaveOnnxModel(false, appFolder, "StochasticGradientDescentNonCalibrated", _labelColunmn, modelStochasticGradientDescentNonCalibratedInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
-            // TODO: Fix for PFI
-            //var transformedData = modelStochasticGradientDescentInductedToHallOfFame.Transform(cachedTrainData);
-            //var permutationFeatureImportance =
-            //_mlContext.BinaryClassification.PermutationFeatureImportance(modelStochasticGradientDescentInductedToHallOfFame.LastTransformer, 
-            //data: transformedData, labelColumnName: _labelColunmn);
-            //Microsoft.ML.Data.TransformerChain<Microsoft.ML.Data.BinaryPredictionTransformer<Microsoft.ML.Calibrators.CalibratedModelParametersBase<Microsoft.ML.Trainers.LinearBinaryModelParameters, Microsoft.ML.Calibrators.PlattCalibrator>>> test;
-            //test = modelStochasticGradientDescentInductedToHallOfFame;
-            //test = null;
-            //var loadedModelTest = Utilities.LoadModel(_mlContext,
-            //    Utilities.GetModelPath(appFolder, algorithmName: algorithmsForModelExplainability[0], isOnnx: false, label: _labelColunmn));
-
-
             /* GENERALIZED ADDITIVE MODELS */
             Console.WriteLine("Training...Generalized Additive Models.");
 
@@ -405,7 +393,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineGeneralizedAdditiveModelsOnHallOfFameBallot =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.Gam(labelColumnName: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.Gam(labelColumnName: _labelColunmn, numberOfIterations: 30000, learningRate: 0.001, maximumBinCountPerFeature: 500)
                 );
             // Fit (build a Machine Learning Model)
             var modelGeneralizedAdditiveModelsOnHallOfFameBallot = learningPipelineGeneralizedAdditiveModelsOnHallOfFameBallot.Fit(cachedTrainData);
@@ -420,7 +408,7 @@ namespace MLDotNet_BaseballClassification
             // Build simple data pipeline
             var learningPipelineGeneralizedAdditiveModelsInductedToHallOfFame =
                 Utilities.GetBaseLinePipeline(_mlContext, featureColumns).Append(
-                _mlContext.BinaryClassification.Trainers.Gam(labelColumnName: _labelColunmn)
+                _mlContext.BinaryClassification.Trainers.Gam(labelColumnName: _labelColunmn, numberOfIterations: 30000, learningRate: 0.001, maximumBinCountPerFeature: 500)
                 );
             // Fit (build a Machine Learning Model)
             var modelGeneralizedAdditiveModelsInductedToHallOfFame = learningPipelineGeneralizedAdditiveModelsInductedToHallOfFame.Fit(cachedTrainData);
@@ -482,7 +470,7 @@ namespace MLDotNet_BaseballClassification
                 file.WriteLine(performanceMetricsTrainTestHeaderRow);
             }
 
-            for (int i = 1; i < algorithmsForModelExplainability.Length; i++)
+            for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
             {
                 for (int j = 0; j < labelColumns.Length; j++)
                 {
@@ -620,7 +608,7 @@ namespace MLDotNet_BaseballClassification
             // Set algorithm type to use for predictions
             // Retrieve model path
             // TODO: Hardcoded add perscriptive rules engine
-            var algorithmTypeName = "FastTree";
+            var algorithmTypeName = "GeneralizedAdditiveModels";
             var loadedModelOnHallOfFameBallot = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, algorithmTypeName, false, "OnHallOfFameBallot", true)));
             var loadedModelInductedToHallOfFame = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, algorithmTypeName, false, "InductedToHallOfFame", true)));
 
