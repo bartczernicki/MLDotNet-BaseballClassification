@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace MLDotNet_BaseballClassification
@@ -448,18 +449,34 @@ namespace MLDotNet_BaseballClassification
             Utilities.SaveOnnxModel(false, appFolder, "LinearSupportVectorMachines", _labelColunmn, modelLinearSupportVectorMachinesInductedToHallOfFame, _mlContext, cachedTrainData);
 
 
-            //var test = _mlContext.BinaryClassification.CrossValidate(cachedTrainData, learningPipelineLightGbmInductedToHallOfFame, 100,
-            //    labelColumn: _labelColunmn, stratificationColumn: _labelColunmn);
-
             Console.WriteLine(string.Empty);
 
             #endregion
 
-            #region Step 3) Report Performance Metrics
+            #region Step 3) Cross-Validate GAM
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
-            Console.WriteLine("Step 3: Report Metrics...");
+            Console.WriteLine("Step 3: Cross Validate GAM");
+            Console.WriteLine("###############################\n");
+            Console.ResetColor();
+
+            //var crossValidationPerformance = _mlContext.BinaryClassification.CrossValidate(cachedFullData, learningPipelineGeneralizedAdditiveModelsInductedToHallOfFame, 10,
+            //    labelColumnName: _labelColunmn, samplingKeyColumnName: _labelColunmn, seed: seed);
+
+            //Console.WriteLine(crossValidationPerformance.Select(fold => fold.Metrics.Accuracy).ToArray());
+            //Console.WriteLine(crossValidationPerformance.Select(fold => fold.Metrics.F1Score).ToArray());
+            //Console.WriteLine(crossValidationPerformance.Select(fold => fold.Metrics.PositivePrecision).ToArray());
+            //Console.WriteLine(crossValidationPerformance.Select(fold => fold.Metrics.PositiveRecall).ToArray());
+
+            #endregion
+
+
+            #region Step 4) Report Performance Metrics
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("###############################");
+            Console.WriteLine("Step 4: Report Metrics...");
             Console.WriteLine("###############################\n");
             Console.ResetColor();
 
@@ -597,11 +614,11 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            #region Step 4) New Predictions - Using Ficticious Player Data
+            #region Step 5) New Predictions - Using Ficticious Player Data
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
-            Console.WriteLine("Step 4: New Predictions...");
+            Console.WriteLine("Step 5: New Predictions...");
             Console.WriteLine("###############################\n");
             Console.ResetColor();
 
