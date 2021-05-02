@@ -30,7 +30,7 @@ namespace MLDotNet_BaseballClassification
         // Useage: Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
             "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
-            "BattingAverage", "SluggingPct", "TB", "TotalPlayerAwards", "AllStarAppearances"
+            "BattingAverage", "SluggingPct", "AllStarAppearances", "TB", "TotalPlayerAwards"
             // Other Features
             /*, "MVPs", "TripleCrowns", "GoldGloves", "MajorLeaguePlayerOfTheYearAwards"*/
         };
@@ -636,10 +636,10 @@ namespace MLDotNet_BaseballClassification
                 BattingAverage = 0.3f,
                 SluggingPct = 0.15f,
                 AllStarAppearances = 1f,
-                MVPs = 0f,
-                TripleCrowns = 0f,
-                GoldGloves = 0f,
-                MajorLeaguePlayerOfTheYearAwards = 0f,
+                //MVPs = 0f,
+                //TripleCrowns = 0f,
+                //GoldGloves = 0f,
+                //MajorLeaguePlayerOfTheYearAwards = 0f,
                 TB = 200f
             };
             var averageMLBBatter = new MLBBaseballBatter
@@ -661,10 +661,10 @@ namespace MLDotNet_BaseballClassification
                 BattingAverage = 0.279f,
                 SluggingPct = 0.486f,
                 AllStarAppearances = 6f,
-                MVPs = 0f,
-                TripleCrowns = 0f,
-                GoldGloves = 0f,
-                MajorLeaguePlayerOfTheYearAwards = 0f,
+                //MVPs = 0f,
+                //TripleCrowns = 0f,
+                //GoldGloves = 0f,
+                //MajorLeaguePlayerOfTheYearAwards = 0f,
                 TB = 4083f
             };
             var greatMLBBatter = new MLBBaseballBatter
@@ -686,10 +686,10 @@ namespace MLDotNet_BaseballClassification
                 BattingAverage = 0.350f,
                 SluggingPct = 0.65f,
                 AllStarAppearances = 14f,
-                MVPs = 2f,
-                TripleCrowns = 1f,
-                GoldGloves = 4f,
-                MajorLeaguePlayerOfTheYearAwards = 2f,
+                //MVPs = 2f,
+                //TripleCrowns = 1f,
+                //GoldGloves = 4f,
+                //MajorLeaguePlayerOfTheYearAwards = 2f,
                 TB = 7000f
             };
 

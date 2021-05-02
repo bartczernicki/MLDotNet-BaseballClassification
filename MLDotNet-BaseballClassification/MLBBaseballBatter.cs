@@ -50,28 +50,28 @@ namespace MLDotNet_BaseballClassification
         [LoadColumn(14), ColumnName("AllStarAppearances")]
         public float AllStarAppearances { get; set; }
 
-        [LoadColumn(15), ColumnName("MVPs")]
-        public float MVPs { get; set; }
+        //[LoadColumn(15), ColumnName("MVPs")]
+        //public float MVPs { get; set; }
 
-        [LoadColumn(16), ColumnName("TripleCrowns")]
-        public float TripleCrowns { get; set; }
+        //[LoadColumn(16), ColumnName("TripleCrowns")]
+        //public float TripleCrowns { get; set; }
 
-        [LoadColumn(17), ColumnName("GoldGloves")]
-        public float GoldGloves { get; set; }
+        //[LoadColumn(17), ColumnName("GoldGloves")]
+        //public float GoldGloves { get; set; }
 
-        [LoadColumn(18), ColumnName("MajorLeaguePlayerOfTheYearAwards")]
-        public float MajorLeaguePlayerOfTheYearAwards { get; set; }
+        //[LoadColumn(18), ColumnName("MajorLeaguePlayerOfTheYearAwards")]
+        //public float MajorLeaguePlayerOfTheYearAwards { get; set; }
 
-        [LoadColumn(19), ColumnName("TB")]
+        [LoadColumn(15), ColumnName("TB")]
         public float TB { get; set; }
 
-        [LoadColumn(20), ColumnName("TotalPlayerAwards")]
+        [LoadColumn(16), ColumnName("TotalPlayerAwards")]
         public float TotalPlayerAwards { get; set; }
 
-        [LoadColumn(21), ColumnName("LastYearPlayed")]
+        [LoadColumn(17), ColumnName("LastYearPlayed")]
         public float LastYearPlayed { get; set; }
 
-        [LoadColumn(22), ColumnName("ID")]
+        [LoadColumn(18), ColumnName("ID")]
         public string ID { get; set; }
 
         public static MLBBaseballBatter FromCsv(string csvLine)
@@ -94,14 +94,14 @@ namespace MLDotNet_BaseballClassification
             mlbBaseballBatter.BattingAverage = float.Parse(values[12], System.Globalization.NumberStyles.Any);
             mlbBaseballBatter.SluggingPct = float.Parse(values[13], System.Globalization.NumberStyles.Any);
             mlbBaseballBatter.AllStarAppearances = float.Parse(values[14]);
-            mlbBaseballBatter.MVPs = float.Parse(values[15], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.TripleCrowns = float.Parse(values[16], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.GoldGloves = float.Parse(values[17], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.MajorLeaguePlayerOfTheYearAwards = float.Parse(values[18], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.TB = float.Parse(values[19], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.TotalPlayerAwards = float.Parse(values[20], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.LastYearPlayed = float.Parse(values[21], System.Globalization.NumberStyles.Any);
-            mlbBaseballBatter.ID = Convert.ToString(values[22]);
+            //mlbBaseballBatter.MVPs = float.Parse(values[15], System.Globalization.NumberStyles.Any);
+            //mlbBaseballBatter.TripleCrowns = float.Parse(values[16], System.Globalization.NumberStyles.Any);
+            //mlbBaseballBatter.GoldGloves = float.Parse(values[17], System.Globalization.NumberStyles.Any);
+            //mlbBaseballBatter.MajorLeaguePlayerOfTheYearAwards = float.Parse(values[18], System.Globalization.NumberStyles.Any);
+            mlbBaseballBatter.TB = float.Parse(values[15], System.Globalization.NumberStyles.Any);
+            mlbBaseballBatter.TotalPlayerAwards = float.Parse(values[16], System.Globalization.NumberStyles.Any);
+            mlbBaseballBatter.LastYearPlayed = float.Parse(values[17], System.Globalization.NumberStyles.Any);
+            mlbBaseballBatter.ID = Convert.ToString(values[18]);
 
             return mlbBaseballBatter;
         }
