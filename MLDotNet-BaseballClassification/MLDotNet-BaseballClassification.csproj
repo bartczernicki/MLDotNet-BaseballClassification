@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
     <PackageReference Include="Microsoft.ML" Version="1.5.5" />
     <PackageReference Include="Microsoft.ML.LightGBM" Version="1.5.5" />
     <PackageReference Include="Microsoft.ML.OnnxConverter" Version="0.17.5" />
