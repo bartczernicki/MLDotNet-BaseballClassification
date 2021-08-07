@@ -1,7 +1,7 @@
 # Baseball Predictions - Training Model Job
 ![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/images/BaseballPredictionsTrainingModelJob.gif)
 
-A .Net Core model building job that builds several models using MLB Baseball data from 1876 - 2020.  
+A .Net model building job that builds several models using MLB Baseball data from 1876 - 2020.  
 
 The outcome are two classification supervised learning predictions:
 * On Hall Of Fame Ballot - whether a batter will be on the Hall of Fame Ballot, based on their career statistics
