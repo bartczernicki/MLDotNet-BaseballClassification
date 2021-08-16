@@ -25,6 +25,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             /*, "MVPs", "TripleCrowns", "GoldGloves", "MajorLeaguePlayerOfTheYearAwards"*/
         };
 
+        public string LabelColumnName { get; protected set; }
+
         public string Name { get; protected set; }
 
         protected static string ModelPath => Path
@@ -35,7 +37,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
 
 
         protected DataOperationsCatalog.TrainTestData _dataSplit;
-        protected ITrainerEstimator<BinaryPredictionTransformer<TParameters>, TParameters> _model;
+        protected ITrainerEstimator<BinaryPredictionTransformer<TParameters>, TParameters> _trainerEstimator;
         protected ITransformer _trainedModel;
 
         protected BaseballBatterTrainerBase()
@@ -47,29 +49,28 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         /// Train model on defined data.
         /// </summary>
         /// <param name="trainingFileName"></param>
-        public void Fit(string trainingFileName)
+        public void Fit(IDataView trainingData)
         {
-            if (!File.Exists(trainingFileName))
-            {
-                throw new FileNotFoundException($"Training file {trainingFileName} doesn't exist.");
-            }
+            //if (!File.Exists(trainingFileName))
+            //{
+            //    throw new FileNotFoundException($"Training file {trainingFileName} doesn't exist.");
+            //}
 
-            _dataSplit = LoadAndPrepareData(trainingFileName);
             var dataProcessPipeline = GetBaseLinePipeline();
-            var trainingPipeline = dataProcessPipeline.Append(_model);
+            var trainingPipeline = dataProcessPipeline.Append(_trainerEstimator);
 
-            _trainedModel = trainingPipeline.Fit(_dataSplit.TrainSet);
+            _trainedModel = trainingPipeline.Fit(trainingData);
         }
 
         /// <summary>
         /// Evaluate trained model.
         /// </summary>
         /// <returns>Model performance.</returns>
-        public BinaryClassificationMetrics Evaluate()
+        public BinaryClassificationMetrics Evaluate(IDataView testData)
         {
-            var testSetTransform = _trainedModel.Transform(_dataSplit.TestSet);
+            var testSetTransform = _trainedModel.Transform(testData);
 
-            return _mlContext.BinaryClassification.EvaluateNonCalibrated(testSetTransform);
+            return _mlContext.BinaryClassification.Evaluate(testSetTransform, labelColumnName: this.LabelColumnName);
         }
 
         /// <summary>

@@ -8,6 +8,9 @@ using System.Reflection;
 using System.Linq;
 using MathNet.Numerics;
 using MathNet.Numerics.Statistics;
+using MLDotNet_BaseballClassification.MachineLearning;
+using MLDotNet_BaseballClassification.MachineLearning.Trainers;
+using System.Runtime.CompilerServices;
 
 namespace MLDotNet_BaseballClassification
 {
@@ -146,6 +149,21 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("Step 2: Train Models...");
             Console.WriteLine("###############################\n");
             Console.ResetColor();
+
+            //TOD Temp test
+            var trainers = new List<ITrainerBase>
+            {
+                new FastTreeBaseballBatterTrainer("OnHallOfFameBallot"),
+                new FastTreeBaseballBatterTrainer("InductedToHallOfFame"),
+                new GamBaseballBatterTrainer("OnHallOfFameBallot"),
+                new GamBaseballBatterTrainer("InductedToHallOfFame"),
+            };
+
+            foreach(var trainer in trainers)
+            {
+                trainer.Fit(cachedTrainData);
+                var performanceMetrics = trainer.Evaluate(cachedTestData);
+            }
 
             /* LIGHTGBM MODELS */
             Console.WriteLine("Training...LightGbm Models.");
