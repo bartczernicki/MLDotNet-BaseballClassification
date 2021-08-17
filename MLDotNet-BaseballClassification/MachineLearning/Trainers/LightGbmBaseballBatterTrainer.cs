@@ -1,6 +1,5 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.Calibrators;
-using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Trainers.LightGbm;
 
 namespace MLDotNet_BaseballClassification.MachineLearning.Trainers

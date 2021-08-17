@@ -71,7 +71,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         {
             var testSetTransform = _trainedModel.Transform(testData);
 
-            return _mlContext.BinaryClassification.Evaluate(testSetTransform, labelColumnName: this.LabelColumnName);
+            return _mlContext.BinaryClassification.EvaluateNonCalibrated(testSetTransform, labelColumnName: this.LabelColumnName);
         }
 
         /// <summary>
