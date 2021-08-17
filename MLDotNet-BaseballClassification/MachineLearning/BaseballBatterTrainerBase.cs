@@ -5,6 +5,7 @@ using Microsoft.ML.Trainers;
 using Microsoft.ML.Transforms;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace MLDotNet_BaseballClassification.MachineLearning
 {
@@ -74,17 +75,44 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         }
 
         /// <summary>
-        /// Save Model in the file.
+        /// Save Model in the ML.NET format as well as ONNX (if applicable)
         /// </summary>
-        public void SaveModel(string folderPath, bool isOnnx, bool isFinalModel)
+        public void SaveModel(string folderPath, bool isFinalModel, IDataView inputData)
         {
-            var modelPath = GetModelPath(folderPath, isOnnx, false);
+            // 1) ML.NET Format
+            var modelPath = GetModelPath(folderPath, false, isFinalModel);
 
             // Write out the model
             using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
                 this._mlContext.Model.Save(_trainedModel, this.dataSchema, fileStream);
             }
+
+            // 2) ONNX Format
+            if (this.SupportsOnnxPersistance())
+            {
+                var onnxModelPath = GetModelPath(folderPath, true, isFinalModel);
+
+                // Persist the model (ONNX)
+                using (var fileStream = new FileStream(onnxModelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
+                {
+                    _mlContext.Model.ConvertToOnnx(_trainedModel, inputData, fileStream);
+                }
+            }
+        }
+
+        public bool SupportsOnnxPersistance()
+        {
+            var algorithmsThatSupportOnnxPersistance = new string[]
+                {"FastForest", "FastTree", "LightGbm", "LogisticRegression",
+                "StochasticGradientDescentCalibrated"
+               // , "StochasticGradientDescentNonCalibrated"
+                };
+
+            // Determine if algorithm is in the supported ONNX array
+            var supportsOnnxPersitance = algorithmsThatSupportOnnxPersistance.Any(this.AlgorithmName.Contains);
+
+            return supportsOnnxPersitance;
         }
 
         private EstimatorChain<NormalizingTransformer> GetBaseLinePipeline()

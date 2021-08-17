@@ -20,6 +20,6 @@ namespace MLDotNet_BaseballClassification.MachineLearning
 
         BinaryClassificationMetrics Evaluate(IDataView testData);
 
-        void SaveModel(string folderPath, bool isOnnx, bool isFinalModel);
+        void SaveModel(string folderPath, bool isFinalModel, IDataView inputData);
     }
 }
