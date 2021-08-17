@@ -10,6 +10,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning
 {
     public interface ITrainerBase
     {
+        string AlgorithmName { get; }
+
         string LabelColumnName { get; }
 
         string Name { get; }
@@ -18,6 +20,6 @@ namespace MLDotNet_BaseballClassification.MachineLearning
 
         BinaryClassificationMetrics Evaluate(IDataView testData);
 
-        void SaveModel();
+        void SaveModel(string folderPath, bool isOnnx, bool isFinalModel);
     }
 }

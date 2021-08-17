@@ -11,6 +11,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
             double learningRate = 0.002)
     : base()
         {
+            this.AlgorithmName = "Gam";
             this.Name = $"Gam-{labelColumnName}|{numberOfIterations}-{maximumBinCountPerFeature}-{learningRate}";
             this.LabelColumnName = labelColumnName;
 

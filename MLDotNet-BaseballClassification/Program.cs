@@ -163,6 +163,7 @@ namespace MLDotNet_BaseballClassification
             {
                 trainer.Fit(cachedTrainData);
                 var performanceMetrics = trainer.Evaluate(cachedTestData);
+                trainer.SaveModel(appFolder, false, false);
             }
 
             /* LIGHTGBM MODELS */

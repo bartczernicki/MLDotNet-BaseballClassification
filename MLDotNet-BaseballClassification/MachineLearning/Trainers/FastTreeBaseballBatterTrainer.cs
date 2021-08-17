@@ -11,6 +11,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
             int minimumExampleCountPerLeaf = 10, double learningRate = 0.2)
     : base()
         {
+            this.AlgorithmName = "FastTree";
             this.Name = $"Fast Tree-{labelColumnName}|{numberOfLeaves}-{numberOfTrees}-{minimumExampleCountPerLeaf}-{learningRate}";
             this.LabelColumnName = labelColumnName;
 

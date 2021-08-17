@@ -25,18 +25,15 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             /*, "MVPs", "TripleCrowns", "GoldGloves", "MajorLeaguePlayerOfTheYearAwards"*/
         };
 
+        public string AlgorithmName { get; protected set; }
+
         public string LabelColumnName { get; protected set; }
 
         public string Name { get; protected set; }
 
-        protected static string ModelPath => Path
-                          .Combine(AppContext.BaseDirectory, "classification.mdl");
-
         protected readonly MLContext _mlContext;
 
-
-
-        protected DataOperationsCatalog.TrainTestData _dataSplit;
+        protected DataViewSchema dataSchema;
         protected ITrainerEstimator<BinaryPredictionTransformer<TParameters>, TParameters> _trainerEstimator;
         protected ITransformer _trainedModel;
 
@@ -59,6 +56,9 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             var dataProcessPipeline = GetBaseLinePipeline();
             var trainingPipeline = dataProcessPipeline.Append(_trainerEstimator);
 
+            // Set the schema
+            this.dataSchema = trainingData.Schema;
+
             _trainedModel = trainingPipeline.Fit(trainingData);
         }
 
@@ -76,9 +76,15 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         /// <summary>
         /// Save Model in the file.
         /// </summary>
-        public void SaveModel()
+        public void SaveModel(string folderPath, bool isOnnx, bool isFinalModel)
         {
-            _mlContext.Model.Save(_trainedModel, _dataSplit.TrainSet.Schema, ModelPath);
+            var modelPath = GetModelPath(folderPath, isOnnx, false);
+
+            // Write out the model
+            using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
+            {
+                this._mlContext.Model.Save(_trainedModel, this.dataSchema, fileStream);
+            }
         }
 
         private EstimatorChain<NormalizingTransformer> GetBaseLinePipeline()
@@ -91,13 +97,26 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             return baselineTransform;
         }
 
-        private DataOperationsCatalog.TrainTestData LoadAndPrepareData(string trainingFileName)
+        public string GetModelPath(string folderPath, bool isOnnx, bool isFinalModel)
         {
-            var trainingDataView = _mlContext.Data
-                                    .LoadFromTextFile<MLBBaseballBatter>
-                                      (trainingFileName, hasHeader: true, separatorChar: ',');
+            var modelPrefix = this.LabelColumnName.Replace("HallOfFame", "HoF");
 
-            return _mlContext.Data.TrainTestSplit(trainingDataView, testFraction: 0.3);
+            // Model persistance convention used:
+            // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
+            string modelPathName = string.Empty;
+            string modelName = string.Format("{0}-{1}.onnx", modelPrefix, this.AlgorithmName);
+            string modelFolder = isFinalModel ? "Final" : "Test";
+
+            if (isOnnx)
+            {
+                modelPathName = Path.Combine(folderPath, $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", modelPrefix, this.AlgorithmName));
+            }
+            else
+            {
+                modelPathName = Path.Combine(folderPath, $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", modelPrefix, this.AlgorithmName));
+            }
+
+            return modelPathName;
         }
     }
 }
