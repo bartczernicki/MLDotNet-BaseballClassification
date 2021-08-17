@@ -153,14 +153,18 @@ namespace MLDotNet_BaseballClassification
             //TOD Temp test
             var trainers = new List<ITrainerBase>
             {
-                new AveragePerceptronBaseballBatterTrainer("OnHallOfFameBallot"),
-                new AveragePerceptronBaseballBatterTrainer("InductedToHallOfFame"),
+                //new AveragePerceptronBaseballBatterTrainer("OnHallOfFameBallot"),
+                //new AveragePerceptronBaseballBatterTrainer("InductedToHallOfFame"),
+                new FastForestBaseballBatterTrainer("OnHallOfFameBallot"),
+                new FastForestBaseballBatterTrainer("InductedToHallOfFame"),
                 //new FastTreeBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new FastTreeBaseballBatterTrainer("InductedToHallOfFame"),
                 //new GamBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new GamBaseballBatterTrainer("InductedToHallOfFame"),
                 //new LightGbmBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new LightGbmBaseballBatterTrainer("InductedToHallOfFame")
+                //new LightGbmBaseballBatterTrainer("InductedToHallOfFame"),
+                //new LbfgsLogisticRegressionBaseballBatterTrainer("OnHallOfFameBallot"),
+                //new LbfgsLogisticRegressionBaseballBatterTrainer("InductedToHallOfFame")
             };
 
             foreach(var trainer in trainers)
