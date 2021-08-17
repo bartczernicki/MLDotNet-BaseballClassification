@@ -157,6 +157,8 @@ namespace MLDotNet_BaseballClassification
                 new FastTreeBaseballBatterTrainer("InductedToHallOfFame"),
                 new GamBaseballBatterTrainer("OnHallOfFameBallot"),
                 new GamBaseballBatterTrainer("InductedToHallOfFame"),
+                new LightGbmBaseballBatterTrainer("OnHallOfFameBallot"),
+                new LightGbmBaseballBatterTrainer("InductedToHallOfFame")
             };
 
             foreach(var trainer in trainers)
