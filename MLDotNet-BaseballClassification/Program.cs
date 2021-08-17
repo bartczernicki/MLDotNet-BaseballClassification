@@ -155,14 +155,16 @@ namespace MLDotNet_BaseballClassification
             {
                 //new AveragePerceptronBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new AveragePerceptronBaseballBatterTrainer("InductedToHallOfFame"),
-                new FastForestBaseballBatterTrainer("OnHallOfFameBallot"),
-                new FastForestBaseballBatterTrainer("InductedToHallOfFame"),
+                //new FastForestBaseballBatterTrainer("OnHallOfFameBallot"),
+                //new FastForestBaseballBatterTrainer("InductedToHallOfFame"),
                 //new FastTreeBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new FastTreeBaseballBatterTrainer("InductedToHallOfFame"),
                 //new GamBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new GamBaseballBatterTrainer("InductedToHallOfFame"),
                 //new LightGbmBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new LightGbmBaseballBatterTrainer("InductedToHallOfFame"),
+                new LinearSvmBaseballBatterTrainer("OnHallOfFameBallot"),
+                new LinearSvmBaseballBatterTrainer("InductedToHallOfFame"),
                 //new LbfgsLogisticRegressionBaseballBatterTrainer("OnHallOfFameBallot"),
                 //new LbfgsLogisticRegressionBaseballBatterTrainer("InductedToHallOfFame")
             };
