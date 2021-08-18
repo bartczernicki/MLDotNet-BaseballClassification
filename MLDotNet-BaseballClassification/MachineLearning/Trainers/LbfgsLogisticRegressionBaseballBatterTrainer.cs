@@ -11,8 +11,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
             float l2Regularization = 1f, float optimizationTolerance = 0.0000001f)
     : base()
         {
-            this.AlgorithmName = "LbfgsLogisticRegression";
-            this.Name = $"LbfgsLogisticRegression-{labelColumnName}|{l1Regularization}|{l2Regularization}|{optimizationTolerance}";
+            this.AlgorithmName = "LogisticRegression";
+            this.Name = $"LogisticRegression-{labelColumnName}|{l1Regularization}|{l2Regularization}|{optimizationTolerance}";
             this.LabelColumnName = labelColumnName;
 
             _trainerEstimator = _mlContext.BinaryClassification.Trainers.LbfgsLogisticRegression(labelColumnName: labelColumnName,

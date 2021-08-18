@@ -94,9 +94,6 @@
     <None Update="Models\Test\InductedToHoF-FastTree.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Models\Test\InductedToHoF-FieldAwareFactorization.mlnet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Models\Test\InductedToHoF-GeneralizedAdditiveModels.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -137,9 +134,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Models\Test\OnHoFBallot-FastTree.onnx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\Test\OnHoFBallot-FieldAwareFactorization.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Models\Test\OnHoFBallot-GeneralizedAdditiveModels.mlnet">

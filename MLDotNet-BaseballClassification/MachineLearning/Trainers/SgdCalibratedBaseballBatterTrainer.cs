@@ -11,8 +11,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
             double learningRate = 0.01, float l2Regularization = 0.000001f)
     : base()
         {
-            this.AlgorithmName = "SgdCalibrated";
-            this.Name = $"SgdCalibrated-{labelColumnName}|{numberOfIterations}|{learningRate}|{l2Regularization}";
+            this.AlgorithmName = "StochasticGradientDescentCalibrated";
+            this.Name = $"StochasticGradientDescentCalibrated-{labelColumnName}|{numberOfIterations}|{learningRate}|{l2Regularization}";
             this.LabelColumnName = labelColumnName;
 
             _trainerEstimator = _mlContext.BinaryClassification.Trainers.SgdCalibrated(labelColumnName: labelColumnName, 

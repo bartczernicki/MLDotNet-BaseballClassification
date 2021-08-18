@@ -8,8 +8,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
         public LinearSvmBaseballBatterTrainer(string labelColumnName, int numberOfIterations = 1)
     : base()
         {
-            this.AlgorithmName = "LinearSvm";
-            this.Name = $"LinearSvm-{labelColumnName}|{numberOfIterations}";
+            this.AlgorithmName = "LinearSupportVectorMachines";
+            this.Name = $"LinearSupportVectorMachines-{labelColumnName}|{numberOfIterations}";
             this.LabelColumnName = labelColumnName;
 
             _trainerEstimator = _mlContext.BinaryClassification.Trainers.LinearSvm(labelColumnName: labelColumnName,

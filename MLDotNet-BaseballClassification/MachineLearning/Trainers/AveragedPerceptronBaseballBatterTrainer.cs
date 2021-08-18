@@ -3,13 +3,13 @@ using Microsoft.ML.Trainers;
 
 namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
 {
-    public class AveragePerceptronBaseballBatterTrainer : BaseballBatterTrainerBase<LinearBinaryModelParameters>
+    public class AveragedPerceptronBaseballBatterTrainer : BaseballBatterTrainerBase<LinearBinaryModelParameters>
     {
-        public AveragePerceptronBaseballBatterTrainer(string labelColumnName, int numberOfIterations = 10)
+        public AveragedPerceptronBaseballBatterTrainer(string labelColumnName, int numberOfIterations = 10)
     : base()
         {
-            this.AlgorithmName = "AveragePerceptron";
-            this.Name = $"AveragePerceptron-{labelColumnName}|{numberOfIterations}";
+            this.AlgorithmName = "AveragedPerceptron";
+            this.Name = $"AveragedPerceptron-{labelColumnName}|{numberOfIterations}";
             this.LabelColumnName = labelColumnName;
 
             _trainerEstimator = _mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumnName: labelColumnName,
