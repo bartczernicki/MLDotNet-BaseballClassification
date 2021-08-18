@@ -12,7 +12,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
     : base()
         {
             this.AlgorithmName = "FastTree";
-            this.Name = $"Fast Tree-{labelColumnName}|{numberOfLeaves}-{numberOfTrees}-{minimumExampleCountPerLeaf}-{learningRate}";
+            this.Name = $"FastTree-{labelColumnName}|{numberOfLeaves}-{numberOfTrees}-{minimumExampleCountPerLeaf}-{learningRate}";
             this.LabelColumnName = labelColumnName;
 
             _trainerEstimator = _mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: labelColumnName,

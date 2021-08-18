@@ -150,30 +150,37 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("###############################\n");
             Console.ResetColor();
 
-            //TOD Temp test
-            var trainers = new List<ITrainerBase>
+            // Build list of BaseballBatter Trainers
+            var trainers = new List<ITrainerBase>();
+
+
+            foreach(var labelColumn in labelColumns)
             {
-                //new AveragePerceptronBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new AveragePerceptronBaseballBatterTrainer("InductedToHallOfFame"),
-                //new FastForestBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new FastForestBaseballBatterTrainer("InductedToHallOfFame"),
-                //new FastTreeBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new FastTreeBaseballBatterTrainer("InductedToHallOfFame"),
-                //new GamBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new GamBaseballBatterTrainer("InductedToHallOfFame"),
-                //new LightGbmBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new LightGbmBaseballBatterTrainer("InductedToHallOfFame"),
-                new LinearSvmBaseballBatterTrainer("OnHallOfFameBallot"),
-                new LinearSvmBaseballBatterTrainer("InductedToHallOfFame"),
-                //new LbfgsLogisticRegressionBaseballBatterTrainer("OnHallOfFameBallot"),
-                //new LbfgsLogisticRegressionBaseballBatterTrainer("InductedToHallOfFame")
+                trainers.Add(new AveragePerceptronBaseballBatterTrainer(labelColumn));
+                trainers.Add(new FastForestBaseballBatterTrainer(labelColumn));
+                trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn));
+                trainers.Add(new GamBaseballBatterTrainer(labelColumn));
+                trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn));
+                trainers.Add(new LinearSvmBaseballBatterTrainer(labelColumn));
+                trainers.Add(new LbfgsLogisticRegressionBaseballBatterTrainer(labelColumn));
+                trainers.Add(new SgdCalibratedBaseballBatterTrainer(labelColumn));
+                trainers.Add(new SgdNonCalibratedBaseballBatterTrainer(labelColumn));
             };
 
             foreach(var trainer in trainers)
             {
+                // Fit a trainer on training data & evaluate performance metrics
+                Console.WriteLine($"Training...{trainer.Name} model.");
                 trainer.Fit(cachedTrainData);
                 var performanceMetrics = trainer.Evaluate(cachedTestData);
+                // Save model
                 trainer.SaveModel(appFolder, false, cachedTrainData);
+
+                // Fit a trainer on full data & persist final model
+                Console.WriteLine($"Training...{trainer.Name} final model.");
+                trainer.Fit(cachedTrainData);
+                // Save model
+                trainer.SaveModel(appFolder, true, cachedFullData);
             }
 
             /* LIGHTGBM MODELS */
