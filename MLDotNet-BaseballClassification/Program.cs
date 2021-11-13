@@ -64,7 +64,7 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.6");
+            Console.WriteLine("Using ML.NET - Version 1.7");
             Console.WriteLine();
             Console.ResetColor();
             Console.WriteLine("This training job will build a series of models that will predict both:");
