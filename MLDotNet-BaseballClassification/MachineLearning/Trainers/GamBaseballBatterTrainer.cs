@@ -7,7 +7,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning.Trainers
     public class GamBaseballBatterTrainer : BaseballBatterTrainerBase<
                   CalibratedModelParametersBase<GamBinaryModelParameters, PlattCalibrator>>
     {
-        public GamBaseballBatterTrainer(string labelColumnName, int numberOfIterations = 9500, int maximumBinCountPerFeature = 255,
+        public GamBaseballBatterTrainer(string labelColumnName, int numberOfIterations = 10000, int maximumBinCountPerFeature = 255,
             double learningRate = 0.002)
     : base()
         {

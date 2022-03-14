@@ -64,13 +64,13 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.7");
+            Console.WriteLine("Using ML.NET - Version 1.7.1");
             Console.WriteLine();
             Console.ResetColor();
             Console.WriteLine("This training job will build a series of models that will predict both:");
             Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
             Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).");
-            Console.WriteLine("Based on an MLB batter's summarized career batting statistics.\n");
+            Console.WriteLine("Based on an MLB batter's summarized career batting statistics (complete 2021 season).\n");
             Console.WriteLine("Note: The goal is to build a 'good enough' set of models & showcase the ML.NET framework.");
             Console.WriteLine("Note: For better models advanced historical scaling and features should be performed.");
             Console.WriteLine();
@@ -155,15 +155,15 @@ namespace MLDotNet_BaseballClassification
 
             foreach(var labelColumn in labelColumns)
             {
-                trainers.Add(new AveragedPerceptronBaseballBatterTrainer(labelColumn));
-                trainers.Add(new FastForestBaseballBatterTrainer(labelColumn));
-                trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn));
+                trainers.Add(new AveragedPerceptronBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
+                trainers.Add(new FastForestBaseballBatterTrainer(labelColumn, numberOfTrees: 500, numberOfLeaves: 50));
+                trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn, numberOfLeaves: 50, numberOfTrees: 500, learningRate: 0.002));
                 trainers.Add(new GamBaseballBatterTrainer(labelColumn));
-                trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn));
-                trainers.Add(new LinearSvmBaseballBatterTrainer(labelColumn));
-                trainers.Add(new LbfgsLogisticRegressionBaseballBatterTrainer(labelColumn));
-                trainers.Add(new SgdCalibratedBaseballBatterTrainer(labelColumn));
-                trainers.Add(new SgdNonCalibratedBaseballBatterTrainer(labelColumn));
+                trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn, numberOfIterations: 5000, learningRate: 0.002));
+                trainers.Add(new LinearSvmBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
+                trainers.Add(new LbfgsLogisticRegressionBaseballBatterTrainer(labelColumn, l1Regularization: 0.9f, l2Regularization: 0.9f));
+                trainers.Add(new SgdCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
+                trainers.Add(new SgdNonCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
             };
 
             foreach(var trainer in trainers)
