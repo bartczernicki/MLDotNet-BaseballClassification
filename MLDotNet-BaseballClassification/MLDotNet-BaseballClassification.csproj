@@ -9,12 +9,12 @@
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
-    <PackageReference Include="Microsoft.ML" Version="1.7.0" />
-    <PackageReference Include="Microsoft.ML.LightGBM" Version="1.7.0" />
-    <PackageReference Include="Microsoft.ML.OnnxConverter" Version="0.19.0" />
+    <PackageReference Include="Microsoft.ML" Version="1.7.1" />
+    <PackageReference Include="Microsoft.ML.LightGBM" Version="1.7.1" />
+    <PackageReference Include="Microsoft.ML.OnnxConverter" Version="0.19.1" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.10.0" />
-    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.7.0" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.15" />
+    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.7.1" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.18" />
   </ItemGroup>
 
   <ItemGroup>
