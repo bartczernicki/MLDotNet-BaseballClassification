@@ -11,6 +11,7 @@ using MathNet.Numerics.Statistics;
 using MLDotNet_BaseballClassification.MachineLearning;
 using MLDotNet_BaseballClassification.MachineLearning.Trainers;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace MLDotNet_BaseballClassification
 {
@@ -27,8 +28,6 @@ namespace MLDotNet_BaseballClassification
         private static MLContext _mlContext;
         // Set seed to static value for re-producable model results (or DateTime for pseudo-random)
         private static int seed = 100;
-
-        //private static string _labelColunmn = "OnHallOfFameBallot";
 
         // Configuration Arrays
 
@@ -50,13 +49,16 @@ namespace MLDotNet_BaseballClassification
         // Useage: Comment out (or uncomment) algorithm names to report model explainability
         private static string[] algorithmsForModelExplainability = new string[] {
                 "LogisticRegression",
-                "FastTree", "LightGbm",
+                "FastTree", /*"LightGbm",*/
                 "StochasticGradientDescentCalibrated",
                 "GeneralizedAdditiveModels"
         };
 
         static void Main(string[] args)
         {
+            // Check Processor Architecture (LightGBM)
+            var processArchitecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString();
+
             // Start stopwatch to time model job
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -65,6 +67,7 @@ namespace MLDotNet_BaseballClassification
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
             Console.WriteLine("Using ML.NET - Version 1.7.1");
+            Console.WriteLine("Process Architecture: {0}", processArchitecture);
             Console.WriteLine();
             Console.ResetColor();
             Console.WriteLine("This training job will build a series of models that will predict both:");
@@ -155,11 +158,15 @@ namespace MLDotNet_BaseballClassification
 
             foreach(var labelColumn in labelColumns)
             {
+                // Do not perform LightGBM over Arm64
+                if (processArchitecture != "Arm64")
+                {
+                    trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn, numberOfIterations: 5000, learningRate: 0.002));
+                }
                 trainers.Add(new AveragedPerceptronBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
                 trainers.Add(new FastForestBaseballBatterTrainer(labelColumn, numberOfTrees: 500, numberOfLeaves: 50));
                 trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn, numberOfLeaves: 50, numberOfTrees: 500, learningRate: 0.002));
                 trainers.Add(new GamBaseballBatterTrainer(labelColumn, numberOfIterations: 50000, learningRate: 0.001));
-                trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn, numberOfIterations: 5000, learningRate: 0.002));
                 trainers.Add(new LinearSvmBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
                 trainers.Add(new LbfgsLogisticRegressionBaseballBatterTrainer(labelColumn, l1Regularization: 0.9f, l2Regularization: 0.9f));
                 trainers.Add(new SgdCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
