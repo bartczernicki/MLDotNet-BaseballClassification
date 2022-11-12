@@ -47,7 +47,7 @@ namespace MLDotNet_BaseballClassification
 
         // List of algorithms that support probability output
         // Useage: Comment out (or uncomment) algorithm names to report model explainability
-        private static string[] algorithmsForModelExplainability = new string[] {
+        private static List<string> algorithmsForModelExplainability = new List<string> {
                 "LogisticRegression",
                 "FastTree", /*"LightGbm",*/
                 "StochasticGradientDescentCalibrated",
@@ -66,7 +66,7 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 1.7.1");
+            Console.WriteLine("Using ML.NET - Version 2.0");
             Console.WriteLine("Process Architecture: {0}", processArchitecture);
             Console.WriteLine();
             Console.ResetColor();
@@ -159,10 +159,13 @@ namespace MLDotNet_BaseballClassification
             foreach(var labelColumn in labelColumns)
             {
                 // Do not perform LightGBM over Arm64
+                // Add it to the list of algorithms for model explainability if x64
                 if (processArchitecture != "Arm64")
                 {
                     trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn, numberOfIterations: 5000, learningRate: 0.002));
+                    algorithmsForModelExplainability.Add("LightGbm");
                 }
+                
                 trainers.Add(new AveragedPerceptronBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
                 trainers.Add(new FastForestBaseballBatterTrainer(labelColumn, numberOfTrees: 500, numberOfLeaves: 50));
                 trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn, numberOfLeaves: 50, numberOfTrees: 500, learningRate: 0.002));
@@ -259,7 +262,7 @@ namespace MLDotNet_BaseballClassification
                 file.WriteLine(performanceMetricsTrainTestHeaderRow);
             }
 
-            for (int i = 0; i < algorithmsForModelExplainability.Length; i++)
+            for (int i = 0; i < algorithmsForModelExplainability.Count(); i++)
             {
                 for (int j = 0; j < labelColumns.Length; j++)
                 {
