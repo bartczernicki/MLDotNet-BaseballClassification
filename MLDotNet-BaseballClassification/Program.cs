@@ -179,14 +179,14 @@ namespace MLDotNet_BaseballClassification
             foreach(var trainer in trainers)
             {
                 // Fit a trainer on training data & evaluate performance metrics
-                Console.WriteLine($"Training...{trainer.Name} model.");
+                Console.WriteLine($"Training...{trainer.Name} Test model.");
                 trainer.Fit(cachedTrainData);
                 var performanceMetrics = trainer.Evaluate(cachedTestData);
                 // Save model
                 trainer.SaveModel(appFolder, false, cachedTrainData);
 
                 // Fit a trainer on full data & persist final model
-                Console.WriteLine($"Training...{trainer.Name} final model.");
+                Console.WriteLine($"Training...{trainer.Name} Final model.");
                 trainer.Fit(cachedTrainData);
                 // Save model
                 trainer.SaveModel(appFolder, true, cachedFullData);
