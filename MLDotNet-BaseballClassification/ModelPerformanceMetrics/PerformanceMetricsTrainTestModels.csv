@@ -1,10 +1,10 @@
 AlgorithmName,LabelColumn,Seed,F1Score,AreaUnderPrecisionRecallCurve,AreaUnderRocCurve,PositivePrecision,PositiveRecall,Accuracy,LogLoss
-LogisticRegression,OnHallOfFameBallot,100,0.7625,0.8466,0.9478,0.8904,0.6667,0.9301,0.2882
+LogisticRegression,OnHallOfFameBallot,100,0.7661,0.8463,0.9477,0.8912,0.6718,0.9309,0.2881
 LogisticRegression,InductedToHallOfFame,100,0.8649,0.9231,0.9962,0.9412,0.8,0.9957,0.0275
 FastTree,OnHallOfFameBallot,100,0.8278,0.9226,0.9783,0.903,0.7641,0.9465,0.4189
 FastTree,InductedToHallOfFame,100,0.8571,0.9177,0.9983,0.8182,0.9,0.9948,0.3077
-StochasticGradientDescentCalibrated,OnHallOfFameBallot,100,0.7778,0.851,0.9477,0.9048,0.6821,0.9344,0.2827
-StochasticGradientDescentCalibrated,InductedToHallOfFame,100,0.8,0.9269,0.9964,0.8,0.8,0.9931,0.0245
+StochasticGradientDescentCalibrated,OnHallOfFameBallot,100,0.7742,0.8507,0.9474,0.9041,0.6769,0.9335,0.283
+StochasticGradientDescentCalibrated,InductedToHallOfFame,100,0.8,0.9231,0.9961,0.8,0.8,0.9931,0.0251
 GeneralizedAdditiveModels,OnHallOfFameBallot,100,0.8011,0.8804,0.9607,0.8827,0.7333,0.9387,0.25
 GeneralizedAdditiveModels,InductedToHallOfFame,100,0.9231,0.959,0.999,0.9474,0.9,0.9974,0.019
 LightGbm,OnHallOfFameBallot,100,0.896,0.9688,0.9924,0.9333,0.8615,0.9663,0.131

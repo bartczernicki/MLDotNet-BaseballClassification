@@ -66,16 +66,16 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 3.0");
+            Console.WriteLine("Using ML.NET - Version 3.0.1");
             Console.WriteLine("Process Architecture: {0}", processArchitecture);
             Console.WriteLine();
             Console.ResetColor();
             Console.WriteLine("This training job will build a series of models that will predict both:");
             Console.WriteLine("1) Whether a baseball batter would make it on the HOF Ballot (OnHallOfFameBallot)");
             Console.WriteLine("2) Whether a baseball batter would be inducted to the HOF (InductedToHallOfFame).");
-            Console.WriteLine("Based on an MLB batter's summarized career batting statistics (complete 2021 season).\n");
+            Console.WriteLine("Based on an MLB batter's summarized career batting statistics (complete 2022 season).\n");
             Console.WriteLine("Note: The goal is to build a 'good enough' set of models & showcase the ML.NET framework.");
-            Console.WriteLine("Note: For better models advanced historical scaling and features should be performed.");
+            Console.WriteLine("Note: For better models advanced historical scaling and feature engineering should be performed.");
             Console.WriteLine();
 
             #region Step 1) ML.NET Setup & Load Data
@@ -103,20 +103,6 @@ namespace MLDotNet_BaseballClassification
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
             var dataFull = _mlContext.Data.LoadFromTextFile<MLBBaseballBatter>(path: _fullDataPath,
                 hasHeader: true, separatorChar: ',', allowQuoting: false);
-
-            // TODO: REMOVE
-            //dynamic myDynamic = new { PropertyOne = true, PropertyTwo = false };
-            //var test = myDynamic.GetType();
-            //var dynamicList = new List<dynamic>();
-            //dynamicList.Add(myDynamic);
-            //dynamicList.Add(myDynamic);
-            //var test2 = _mlContext.Data.LoadFromEnumerable<dynamic>(dynamicList);
-            //var pre = test2.Preview();
-            //var testD = dataTrainBatters.FirstOrDefault();
-            //Microsoft.ML.Data.SchemaDefinition sd;
-            //var schemaDefinition = SchemaDefinition.Create(testD.GetType());
-            //var test2 = _mlContext.Data.LoadFromEnumerable<dynamic>(dataTrainBatters, schemaDefinition );
-            //var test2preview = test2.Preview();
 
             // Retrieve Data Schema
             var dataSchema = dataTrain.Schema;
