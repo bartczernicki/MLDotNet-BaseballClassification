@@ -26,7 +26,7 @@ namespace MLDotNet_BaseballClassification
 
         // Thread-safe ML Context
         private static MLContext _mlContext;
-        // Set seed to static value for re-producable model results (or DateTime for pseudo-random)
+        // Set seed to static value for re-producible model results (or DateTime for pseudo-random)
         private static int seed = 100;
 
         // Configuration Arrays
@@ -66,7 +66,7 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 3.0.1");
+            Console.WriteLine("Using ML.NET - Version 4.0");
             Console.WriteLine("Process Architecture: {0}", processArchitecture);
             Console.WriteLine();
             Console.ResetColor();

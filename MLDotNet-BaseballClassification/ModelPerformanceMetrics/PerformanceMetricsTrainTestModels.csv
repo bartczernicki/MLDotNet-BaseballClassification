@@ -3,8 +3,8 @@ LogisticRegression,OnHallOfFameBallot,100,0.748,0.8387,0.9451,0.8313,0.6798,0.92
 LogisticRegression,InductedToHallOfFame,100,0.6667,0.8388,0.9956,0.9375,0.5172,0.9872,0.0444
 FastTree,OnHallOfFameBallot,100,0.8571,0.9372,0.9773,0.9257,0.798,0.9539,0.4124
 FastTree,InductedToHallOfFame,100,0.7931,0.9356,0.9983,0.7931,0.7931,0.9898,0.3098
-StochasticGradientDescentCalibrated,OnHallOfFameBallot,100,0.7634,0.8475,0.9467,0.8402,0.6995,0.9249,0.2919
-StochasticGradientDescentCalibrated,InductedToHallOfFame,100,0.7843,0.8426,0.9956,0.9091,0.6897,0.9906,0.0414
+StochasticGradientDescentCalibrated,OnHallOfFameBallot,100,0.7655,0.848,0.9468,0.8452,0.6995,0.9258,0.2916
+StochasticGradientDescentCalibrated,InductedToHallOfFame,100,0.7843,0.8411,0.9956,0.9091,0.6897,0.9906,0.0413
 GeneralizedAdditiveModels,OnHallOfFameBallot,100,0.7925,0.8909,0.9619,0.875,0.7241,0.9343,0.2432
 GeneralizedAdditiveModels,InductedToHallOfFame,100,0.9455,0.9931,0.9998,1,0.8966,0.9974,0.0164
 LightGbm,OnHallOfFameBallot,100,0.9086,0.9671,0.987,0.9667,0.8571,0.9701,0.1386
