@@ -18,7 +18,7 @@ The model building job includes the following features:
 * Applies simple perscriptive/rules engine to select the "best model"
 * Selected "best model" is used for inference on new ficticious baseball player careers (to verify overall performance)
 
-Current Requirements ():
+Current Requirements:
 * Visual Studio 2022 IDE (Community SKU+), .NET 9.x, ML.NET v4.0
   
 Requirements (what the solution has been developed, compiled with orginally through current):
