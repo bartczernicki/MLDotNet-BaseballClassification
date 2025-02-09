@@ -1,17 +1,12 @@
 ﻿using Microsoft.ML;
-using Microsoft.ML.Trainers;
+using MLDotNet_BaseballClassification.MachineLearning;
+using MLDotNet_BaseballClassification.MachineLearning.Trainers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Linq;
-using MathNet.Numerics;
-using MathNet.Numerics.Statistics;
-using MLDotNet_BaseballClassification.MachineLearning;
-using MLDotNet_BaseballClassification.MachineLearning.Trainers;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace MLDotNet_BaseballClassification
 {
@@ -32,7 +27,7 @@ namespace MLDotNet_BaseballClassification
         // Configuration Arrays
 
         // List of feature columns used for training
-        // Useage: Comment out (or uncomment) feature names in order to explicitly select features for model training
+        // Use: Comment out (or uncomment) feature names in order to explicitly select features for model training
         private static string[] featureColumns = new string[] {
             "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
             "BattingAverage", "SluggingPct", "AllStarAppearances", "TB", "TotalPlayerAwards"
@@ -42,11 +37,11 @@ namespace MLDotNet_BaseballClassification
         private static string featureColumnsStringArray = String.Join(",", featureColumns);
 
         // List of supervised learning labels
-        // Useage: At least one must be left
+        // Use: At least one must be left
         private static string[] labelColumns = new string[] { "OnHallOfFameBallot", "InductedToHallOfFame" };
 
         // List of algorithms that support probability output
-        // Useage: Comment out (or uncomment) algorithm names to report model explainability
+        // Use: Comment out (or uncomment) algorithm names to report model explainability
         private static List<string> algorithmsForModelExplainability = new List<string> {
                 "LogisticRegression",
                 "FastTree", /*"LightGbm",*/
@@ -66,7 +61,7 @@ namespace MLDotNet_BaseballClassification
             Console.Title = "Baseball Predictions - Training Model Job";
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting Baseball Predictions - Training Model Job");
-            Console.WriteLine("Using ML.NET - Version 4.0");
+            Console.WriteLine("Using ML.NET - Version 4.0.1");
             Console.WriteLine("Process Architecture: {0}", processArchitecture);
             Console.WriteLine();
             Console.ResetColor();
