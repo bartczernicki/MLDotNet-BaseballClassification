@@ -12,5 +12,8 @@ namespace MLDotNet_BaseballClassification
 
         [ColumnName("Score")]
         public float Score { get; set; }
+
+        [ColumnName("FeatureContributions")]
+        public float[] FeatureContributions { get; set; }
     }
 }

@@ -49,13 +49,9 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         /// <param name="trainingFileName"></param>
         public void Fit(IDataView trainingData)
         {
-            //if (!File.Exists(trainingFileName))
-            //{
-            //    throw new FileNotFoundException($"Training file {trainingFileName} doesn't exist.");
-            //}
-
             var dataProcessPipeline = GetBaseLinePipeline();
-            var trainingPipeline = dataProcessPipeline.Append(_trainerEstimator);
+            var trainingPipeline = dataProcessPipeline
+                .Append(_trainerEstimator);
 
             // Set the schema
             this.dataSchema = trainingData.Schema;
@@ -89,7 +85,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             }
 
             // 2) ONNX Format
-            if (this.SupportsOnnxPersistance())
+            if (this.SupportsOnnxPersistence())
             {
                 var onnxModelPath = GetModelPath(folderPath, true, isFinalModel);
 
@@ -101,24 +97,25 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             }
         }
 
-        public bool SupportsOnnxPersistance()
+        public bool SupportsOnnxPersistence()
         {
-            var algorithmsThatSupportOnnxPersistance = new string[]
+            var algorithmsThatSupportOnnxPersistence = new string[]
                 {"FastForest", "FastTree", "LightGbm", "LogisticRegression",
                 "StochasticGradientDescentCalibrated"
                // , "StochasticGradientDescentNonCalibrated"
                 };
 
             // Determine if algorithm is in the supported ONNX array
-            var supportsOnnxPersitance = algorithmsThatSupportOnnxPersistance.Any(this.AlgorithmName.Contains);
+            var supportsOnnxPersitence = algorithmsThatSupportOnnxPersistence.Any(this.AlgorithmName.Contains);
 
-            return supportsOnnxPersitance;
+            return supportsOnnxPersitence;
         }
 
         private EstimatorChain<NormalizingTransformer> GetBaseLinePipeline()
         {
             // Build baseline platform and cache
             var baselineTransform = _mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", _featureColumns)
+                .Append(_mlContext.Transforms.Concatenate("Features", _featureColumns))
                 .Append(_mlContext.Transforms.NormalizeMinMax("Features", "FeaturesBeforeNormalization"))
                 .AppendCacheCheckpoint(this._mlContext);
 
@@ -129,7 +126,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         {
             var modelPrefix = this.LabelColumnName.Replace("HallOfFame", "HoF");
 
-            // Model persistance convention used:
+            // Model persistence convention used:
             // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
             string modelPathName = string.Empty;
             string modelName = string.Format("{0}-{1}.onnx", modelPrefix, this.AlgorithmName);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.Data;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -126,9 +127,9 @@ namespace MLDotNet_BaseballClassification
 
             // Cast the loaded model to a transformer chain
             // This allows for interacting with the LastTransformer property
-            TransformerChain<ITransformer> transfomerChain = (TransformerChain<ITransformer>)loadedModel;
+            TransformerChain<ITransformer> transformerChain = (TransformerChain<ITransformer>)loadedModel;
 
-            return transfomerChain;
+            return transformerChain;
         }
 
         /// <summary>
@@ -205,5 +206,7 @@ namespace MLDotNet_BaseballClassification
                 }
             return index;
         }
+
+        public static float Sigmoid(float x) => 1f / (1f + MathF.Exp(-x));
     }
 }
