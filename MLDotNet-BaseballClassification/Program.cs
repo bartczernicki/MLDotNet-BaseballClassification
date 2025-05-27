@@ -29,13 +29,7 @@ namespace MLDotNet_BaseballClassification
 
         // List of feature columns used for training
         // Use: Comment out (or uncomment) feature names in order to explicitly select features for model training
-        private static string[] featureColumns = new string[] {
-            "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
-            "BattingAverage", "SluggingPct", "AllStarAppearances", "TB", "TotalPlayerAwards"
-            // Other Features
-            /*, "MVPs", "TripleCrowns", "GoldGloves", "MajorLeaguePlayerOfTheYearAwards"*/
-        };
-        private static string featureColumnsStringArray = String.Join(",", featureColumns);
+        private static string[] featureColumns = MachineLearning.Utilities.FeatureColumns;
 
         // List of supervised learning labels
         // Use: At least one must be left
@@ -112,64 +106,64 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            //#region Step 2) Build Multiple Machine Learning Models
+            #region Step 2) Build Multiple Machine Learning Models
 
-            //// Notes:
-            //// Model training is for demo purposes and uses the default hyperparameters.
-            //// Default parameters were used in optimizing for large data sets.
-            //// It is best practice to always provide hyperparameters explicitly in order to have historical reproducability
-            //// as the ML.NET API evolves.
+            // Notes:
+            // Model training is for demo purposes and uses the default hyperparameters.
+            // Default parameters were used in optimizing for large data sets.
+            // It is best practice to always provide hyperparameters explicitly in order to have historical reproducability
+            // as the ML.NET API evolves.
 
-            //Console.ForegroundColor = ConsoleColor.Yellow;
-            //Console.WriteLine("###############################");
-            //Console.WriteLine("Step 2: Train Models...");
-            //Console.WriteLine("###############################\n");
-            //Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("###############################");
+            Console.WriteLine("Step 2: Train Models...");
+            Console.WriteLine("###############################\n");
+            Console.ResetColor();
 
-            //// Build list of BaseballBatter Trainers
-            //var trainers = new List<ITrainerBase>();
+            // Build list of BaseballBatter Trainers
+            var trainers = new List<ITrainerBase>();
 
 
-            //foreach (var labelColumn in labelColumns)
-            //{
-            //    // Do not perform LightGBM over Arm64
-            //    // Add it to the list of algorithms for model explainability if x64
-            //    if (processArchitecture != "Arm64")
-            //    {
-            //        trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn, numberOfIterations: 5000, learningRate: 0.002));
-            //        algorithmsForModelExplainability.Add("LightGbm");
-            //    }
+            foreach (var labelColumn in labelColumns)
+            {
+                // Do not perform LightGBM over Arm64
+                // Add it to the list of algorithms for model explainability if x64
+                if (processArchitecture != "Arm64")
+                {
+                    trainers.Add(new LightGbmBaseballBatterTrainer(labelColumn, numberOfIterations: 5000, learningRate: 0.002));
+                    algorithmsForModelExplainability.Add("LightGbm");
+                }
 
-            //    trainers.Add(new AveragedPerceptronBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
-            //    trainers.Add(new FastForestBaseballBatterTrainer(labelColumn, numberOfTrees: 500, numberOfLeaves: 50));
-            //    trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn, numberOfLeaves: 50, numberOfTrees: 500, learningRate: 0.002));
-            //    trainers.Add(new GamBaseballBatterTrainer(labelColumn, numberOfIterations: 50000, learningRate: 0.001));
-            //    trainers.Add(new LinearSvmBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
-            //    trainers.Add(new LbfgsLogisticRegressionBaseballBatterTrainer(labelColumn, l1Regularization: 0.9f, l2Regularization: 0.9f));
-            //    trainers.Add(new SgdCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
-            //    trainers.Add(new SgdNonCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
-            //}
-            //;
+                trainers.Add(new AveragedPerceptronBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
+                trainers.Add(new FastForestBaseballBatterTrainer(labelColumn, numberOfTrees: 500, numberOfLeaves: 50));
+                trainers.Add(new FastTreeBaseballBatterTrainer(labelColumn, numberOfLeaves: 50, numberOfTrees: 500, learningRate: 0.002));
+                trainers.Add(new GamBaseballBatterTrainer(labelColumn, numberOfIterations: 50000, learningRate: 0.001));
+                trainers.Add(new LinearSvmBaseballBatterTrainer(labelColumn, numberOfIterations: 1000));
+                trainers.Add(new LbfgsLogisticRegressionBaseballBatterTrainer(labelColumn, l1Regularization: 0.9f, l2Regularization: 0.9f));
+                trainers.Add(new SgdCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
+                trainers.Add(new SgdNonCalibratedBaseballBatterTrainer(labelColumn, numberOfIterations: 1000, learningRate: 0.002));
+            }
+            ;
 
-            //foreach (var trainer in trainers)
-            //{
-            //    // Fit a trainer on training data & evaluate performance metrics
-            //    Console.WriteLine($"Training...{trainer.Name} Test model.");
-            //    trainer.Fit(cachedTrainData);
-            //    var performanceMetrics = trainer.Evaluate(cachedTestData);
-            //    // Save model
-            //    trainer.SaveModel(appFolder, false, cachedTrainData);
+            foreach (var trainer in trainers)
+            {
+                // Fit a trainer on training data & evaluate performance metrics
+                Console.WriteLine($"Training...{trainer.Name} Test model.");
+                trainer.Fit(cachedTrainData);
+                var performanceMetrics = trainer.Evaluate(cachedTestData);
+                // Save model
+                trainer.SaveModel(appFolder, false, cachedTrainData);
 
-            //    // Fit a trainer on full data & persist final model
-            //    Console.WriteLine($"Training...{trainer.Name} Final model.");
-            //    trainer.Fit(cachedTrainData);
-            //    // Save model
-            //    trainer.SaveModel(appFolder, true, cachedFullData);
-            //}
+                // Fit a trainer on full data & persist final model
+                Console.WriteLine($"Training...{trainer.Name} Final model.");
+                trainer.Fit(cachedTrainData);
+                // Save model
+                trainer.SaveModel(appFolder, true, cachedFullData);
+            }
 
-            //Console.WriteLine(string.Empty);
+            Console.WriteLine(string.Empty);
 
-            //#endregion
+            #endregion
 
             #region Step 4) Report Performance Metrics
 
@@ -244,9 +238,9 @@ namespace MLDotNet_BaseballClassification
             var loadedModelOnHallOfFameBallot = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, algorithmTypeName, false, "OnHallOfFameBallot", true)));
             var loadedModelInductedToHallOfFame = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, algorithmTypeName, false, "InductedToHallOfFame", true)));
 
-            // Create prediction engine
-            var predEngineOnHallOfFameBallot = _mlContext.Model.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(loadedModelOnHallOfFameBallot);
-            var predEngineInductedToHallOfFame = _mlContext.Model.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(loadedModelInductedToHallOfFame);
+            // Create prediction engine with Feature Contribution support
+            var predEngineOnHallOfFameBallot = MachineLearning.Utilities.CreatePredictionEngine(_mlContext, loadedModelOnHallOfFameBallot, cachedFullData);
+            var predEngineInductedToHallOfFame = MachineLearning.Utilities.CreatePredictionEngine(_mlContext, loadedModelInductedToHallOfFame, cachedFullData);
 
             // Create statistics for bad, average & great player
             var badMLBBatter = new MLBBaseballBatter
@@ -325,96 +319,6 @@ namespace MLDotNet_BaseballClassification
                 TB = 7000f
             };
 
-            var batters = new List<MLBBaseballBatter> { badMLBBatter, averageMLBBatter, greatMLBBatter };
-            // Convert the list to an IDataView
-            var newPredictionsData = _mlContext.Data.LoadFromEnumerable(batters);
-
-            var baselineTransform = _mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", featureColumns)
-                .Append(_mlContext.Transforms.NormalizeMinMax("Features", "FeaturesBeforeNormalization"))
-                .Append(_mlContext.Transforms.Concatenate("Features", featureColumns));
-
-            var newDataTransformer = baselineTransform.Fit(cachedFullData);
-            var singleRow = newDataTransformer.Transform(_mlContext.Data.TakeRows(cachedFullData, 10000));
-
-            var singleFeatureTransformerOnHallOfFameBallot
-                = loadedModelOnHallOfFameBallot.LastTransformer as Microsoft.ML.Data.BinaryPredictionTransformer<Microsoft.ML.Calibrators.CalibratedModelParametersBase<Microsoft.ML.Trainers.FastTree.GamBinaryModelParameters, Microsoft.ML.Calibrators.PlattCalibrator>>;
-
-            var contributionEstimatorOnHallOfFameBallot = _mlContext.Transforms
-            .CalculateFeatureContribution(
-                predictionTransformer: singleFeatureTransformerOnHallOfFameBallot,
-                numberOfPositiveContributions: 14,
-                numberOfNegativeContributions: 14,
-                normalize: false)
-            .Fit(singleRow);
-
-            // Create the full transformer chain.
-            var scoringPipelineOnHallOfFameBallot = loadedModelOnHallOfFameBallot
-                .Append(contributionEstimatorOnHallOfFameBallot);
-
-            var modelOnHallOfFameBallotWithEst = _mlContext.Model.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(scoringPipelineOnHallOfFameBallot);
-
-
-            var singleFeatureTransformerInductedToHallOfFame
-                = loadedModelInductedToHallOfFame.LastTransformer as Microsoft.ML.Data.BinaryPredictionTransformer<Microsoft.ML.Calibrators.CalibratedModelParametersBase<Microsoft.ML.Trainers.FastTree.GamBinaryModelParameters, Microsoft.ML.Calibrators.PlattCalibrator>>;
-
-            var contributionEstimatorInductedToHallOfFame = _mlContext.Transforms
-            .CalculateFeatureContribution(
-                predictionTransformer: singleFeatureTransformerInductedToHallOfFame,
-                numberOfPositiveContributions: 14,
-                numberOfNegativeContributions: 14,
-                normalize: false)
-            .Fit(singleRow);
-
-            // Create the full transformer chain.
-            var scoringPipelineInductedToHallOfFame = loadedModelInductedToHallOfFame
-                .Append(contributionEstimatorInductedToHallOfFame);
-
-            var modelInductedToHallOfFameWithEst = _mlContext.Model.CreatePredictionEngine<MLBBaseballBatter, MLBHOFPrediction>(scoringPipelineInductedToHallOfFame);
-
-            var test1 = modelOnHallOfFameBallotWithEst.Predict(greatMLBBatter);
-
-            for (int i = 0; i < test1.FeatureContributions.Length; i++)
-                Console.WriteLine($" {featureColumns[i]} contribution: {test1.FeatureContributions[i]:F4}");
-
-            Console.WriteLine($"Score: {test1.Score:F4}");
-            Console.WriteLine($"Sum: {test1.FeatureContributions.Sum():F4}");
-            var prob = Utilities.Sigmoid(test1.Score);
-            Console.WriteLine($"Prob from Score: {Utilities.Sigmoid(test1.Score):F5}");
-            float slope = prob * (1 - prob);
-
-            var test2 = modelInductedToHallOfFameWithEst.Predict(greatMLBBatter);
-
-            float sum = 0f;
-            for (int i = 0; i < test1.FeatureContributions.Length; i++)
-            {
-                float phi = test1.FeatureContributions[i];
-                float deltaP = phi * slope;
-                Console.WriteLine(
-                  $"{featureColumns[i],-20}  ϕ={phi,6:0.0000}    Δp={deltaP,6:0.0000}");
-                sum += deltaP;
-            }
-            Console.WriteLine($"Prob from Sum of Feat: {sum:F5}");
-
-            for (int i = 0; i < test2.FeatureContributions.Length; i++)
-                Console.WriteLine($" {featureColumns[i]} contribution: {test2.FeatureContributions[i]:F4}");
-
-            Console.WriteLine($"Score: {test2.Score:F4}");
-            Console.WriteLine($"Sum: {test2.FeatureContributions.Sum():F4}");
-
-            var test3 = modelInductedToHallOfFameWithEst.Predict(averageMLBBatter);
-            for (int i = 0; i < test2.FeatureContributions.Length; i++)
-                Console.WriteLine($" {featureColumns[i]} contribution: {test2.FeatureContributions[i]:F4}");
-
-            Console.WriteLine($"Score: {test3.Score:F4}");
-            Console.WriteLine($"Sum: {test3.FeatureContributions.Sum():F4}");
-
-
-            var test4 = modelInductedToHallOfFameWithEst.Predict(badMLBBatter);
-            for (int i = 0; i < test2.FeatureContributions.Length; i++)
-                Console.WriteLine($" {featureColumns[i]} contribution: {test2.FeatureContributions[i]:F4}");
-
-            Console.WriteLine($"Score: {test4.Score:F4}");
-            Console.WriteLine($"Sum: {test4.FeatureContributions.Sum():F4}");
 
             // Make the predictions for both OnHallOfFameBallot & InductedToHallOfFame
             var predBadOnHallOfFameBallot = predEngineOnHallOfFameBallot.Predict(badMLBBatter);
@@ -430,17 +334,23 @@ namespace MLDotNet_BaseballClassification
             Console.WriteLine("Bad Baseball Player Prediction");
             Console.WriteLine("------------------------------");
             Console.WriteLine("On HOF Ballot Prediction: " + predBadOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predBadOnHallOfFameBallot.Probability);
+            Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predBadOnHallOfFameBallot));
             Console.WriteLine("HOF Inducted Prediction:  " + predBadInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predBadInductedToHallOfFame.Probability);
+            Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predBadInductedToHallOfFame));
             Console.WriteLine();
             Console.WriteLine("Average Baseball Player Prediction");
             Console.WriteLine("------------------------------");
             Console.WriteLine("On HOF Ballot Prediction: " + predAverageOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predAverageOnHallOfFameBallot.Probability);
+            Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predAverageOnHallOfFameBallot));
             Console.WriteLine("HOF Inducted Prediction:  " + predAverageInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predAverageInductedToHallOfFame.Probability);
+            Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predAverageInductedToHallOfFame));
             Console.WriteLine();
             Console.WriteLine("Great Baseball Player Prediction");
             Console.WriteLine("------------------------------");
             Console.WriteLine("On HOF Ballot Prediction: " + predGreatOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predGreatOnHallOfFameBallot.Probability);
+            Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predGreatOnHallOfFameBallot));
             Console.WriteLine("HOF Inducted Prediction:  " + predGreatInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predGreatInductedToHallOfFame.Probability);
+            Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predGreatInductedToHallOfFame));
 
             #endregion
 

@@ -19,13 +19,6 @@ namespace MLDotNet_BaseballClassification.MachineLearning
     {
         private int _seed = 100;
 
-        private static string[] _featureColumns = new string[] {
-            "YearsPlayed", "AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "SB",
-            "BattingAverage", "SluggingPct", "AllStarAppearances", "TB", "TotalPlayerAwards"
-            // Other Features
-            /*, "MVPs", "TripleCrowns", "GoldGloves", "MajorLeaguePlayerOfTheYearAwards"*/
-        };
-
         public string AlgorithmName { get; protected set; }
 
         public string LabelColumnName { get; protected set; }
@@ -114,8 +107,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         private EstimatorChain<NormalizingTransformer> GetBaseLinePipeline()
         {
             // Build baseline platform and cache
-            var baselineTransform = _mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", _featureColumns)
-                .Append(_mlContext.Transforms.Concatenate("Features", _featureColumns))
+            var baselineTransform = _mlContext.Transforms.Concatenate("FeaturesBeforeNormalization", Utilities.FeatureColumns)
+                .Append(_mlContext.Transforms.Concatenate("Features", Utilities.FeatureColumns))
                 .Append(_mlContext.Transforms.NormalizeMinMax("Features", "FeaturesBeforeNormalization"))
                 .AppendCacheCheckpoint(this._mlContext);
 
