@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.32804.182
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLDotNet-BaseballClassification", "MLDotNet-BaseballClassification\MLDotNet-BaseballClassification.csproj", "{7018CA01-2D07-49BA-84E1-329266C9DB1A}"
 EndProject
