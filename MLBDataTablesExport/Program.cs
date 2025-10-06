@@ -50,7 +50,7 @@ namespace MLBDataTablesExport
             {
                 var qualified = $"[{Schema}].[{table}]";
                 var path = Path.Combine(ExportDir, $"{table}.csv");
-                Console.WriteLine($"\n Exporting {qualified} → {path}");
+                Console.WriteLine($"\nExporting {qualified} - {path}");
                 try
                 {
                     await ExportWithSepAsync(conn, qualified, path);
@@ -128,11 +128,11 @@ namespace MLBDataTablesExport
                 }
 
                 rowCount++;
-                if (rowCount % 100_000 == 0)
-                    Console.WriteLine($"  {rowCount:N0} rows...");
+                //if (rowCount % 10_000 == 0)
+                //    Console.WriteLine($" {rowCount:N0} rows...");
             }
 
-            Console.WriteLine($"  → {rowCount:N0} rows written.");
+            Console.WriteLine($" {rowCount:N0} rows written.");
         }
     }
 }
