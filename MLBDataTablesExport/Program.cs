@@ -10,7 +10,7 @@ namespace MLBDataTablesExport
 {
     internal class Program
     {
-        private static readonly string ExportDir = @"C:\Exports"; // hard-coded
+        private static readonly string ExportDir = @"C:\Users\BartAIServer\Downloads\Exports\"; // hard-coded
         private static readonly string Schema = "dbo";
         private static readonly string[] Tables =
         {
@@ -29,19 +29,19 @@ namespace MLBDataTablesExport
             var config = new ConfigurationBuilder()
                 .AddUserSecrets<Program>()
                 .Build();
-            
+
             var connStr = config["SQLServerConnectionString"];
             if (string.IsNullOrWhiteSpace(connStr))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ No connection string found in user secrets (SQLServerConnectionString).");
+                Console.WriteLine(" No connection string found in user secrets (SQLServerConnectionString).");
                 Console.ResetColor();
                 return;
             }
 
             Directory.CreateDirectory(ExportDir);
-            Console.WriteLine($"📁 Export directory: {ExportDir}");
-            Console.WriteLine($"🔗 Connecting to: {connStr}");
+            Console.WriteLine($" Export directory: {ExportDir}");
+            Console.WriteLine($" Connecting to: {connStr}");
 
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
@@ -50,21 +50,21 @@ namespace MLBDataTablesExport
             {
                 var qualified = $"[{Schema}].[{table}]";
                 var path = Path.Combine(ExportDir, $"{table}.csv");
-                Console.WriteLine($"\n▶ Exporting {qualified} → {path}");
+                Console.WriteLine($"\n Exporting {qualified} → {path}");
                 try
                 {
                     await ExportWithSepAsync(conn, qualified, path);
-                    Console.WriteLine($"✅ {table} done.");
+                    Console.WriteLine($" {table} done.");
                 }
                 catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"⚠ {table} failed: {ex.Message}");
+                    Console.WriteLine($" {table} failed: {ex.Message}");
                     Console.ResetColor();
                 }
             }
 
-            Console.WriteLine("\n🎉 All exports complete.");
+            Console.WriteLine("\n All exports complete.");
         }
 
         private static async Task ExportWithSepAsync(SqlConnection conn, string qualifiedTable, string csvPath)
@@ -87,14 +87,26 @@ namespace MLBDataTablesExport
 
             while (await reader.ReadAsync())
             {
-                await using var row = writer.NewRow();
+                // Cache IsDBNull checks before creating the row to avoid ref struct across await
+                bool[] nullFlags = new bool[fieldCount];
+                object?[] values = new object?[fieldCount];
+
                 for (int i = 0; i < fieldCount; i++)
                 {
-                    if (await reader.IsDBNullAsync(i))
+                    nullFlags[i] = await reader.IsDBNullAsync(i);
+                    if (!nullFlags[i])
+                        values[i] = reader.GetValue(i);
+                }
+
+                // Now work with the row (ref struct) without any await calls
+                using var row = writer.NewRow();
+                for (int i = 0; i < fieldCount; i++)
+                {
+                    if (nullFlags[i])
                         continue;
 
                     var col = row[colNames[i]];
-                    var val = reader.GetValue(i);
+                    var val = values[i];
                     switch (val)
                     {
                         case DateTime dt:
@@ -110,7 +122,7 @@ namespace MLBDataTablesExport
                             col.Set(f.ToString(null, inv));
                             break;
                         default:
-                            col.Set(val.ToString());
+                            col.Set(val?.ToString() ?? string.Empty);
                             break;
                     }
                 }
