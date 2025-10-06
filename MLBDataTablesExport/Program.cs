@@ -50,11 +50,13 @@ namespace MLBDataTablesExport
             {
                 var qualified = $"[{Schema}].[{table}]";
                 var path = Path.Combine(ExportDir, $"{table}.csv");
-                Console.WriteLine($"\nExporting {qualified} - {path}");
+                Console.WriteLine($"\nExporting {qualified}");
+                Console.WriteLine($"\n Path: {path}");
+
                 try
                 {
                     await ExportWithSepAsync(conn, qualified, path);
-                    Console.WriteLine($" {table} done.");
+                    Console.WriteLine($" {table} done");
                 }
                 catch (Exception ex)
                 {
@@ -64,7 +66,7 @@ namespace MLBDataTablesExport
                 }
             }
 
-            Console.WriteLine("\n All exports complete.");
+            Console.WriteLine("\nAll exports complete");
         }
 
         private static async Task ExportWithSepAsync(SqlConnection conn, string qualifiedTable, string csvPath)
@@ -132,7 +134,7 @@ namespace MLBDataTablesExport
                 //    Console.WriteLine($" {rowCount:N0} rows...");
             }
 
-            Console.WriteLine($" {rowCount:N0} rows written.");
+            Console.WriteLine($" {rowCount:N0} rows written");
         }
     }
 }
