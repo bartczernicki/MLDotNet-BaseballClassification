@@ -9,13 +9,13 @@
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
-    <PackageReference Include="Microsoft.ML" Version="4.0.2" />
-    <PackageReference Include="Microsoft.ML.LightGBM" Version="4.0.2" />
-    <PackageReference Include="Microsoft.ML.OnnxConverter" Version="0.22.2" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.0" />
-    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="4.0.2" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.8" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Microsoft.ML" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.LightGBM" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.OnnxConverter" Version="0.23.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
+    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="5.0.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
