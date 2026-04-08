@@ -70,6 +70,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         {
             // 1) ML.NET Format
             var modelPath = GetModelPath(folderPath, false, isFinalModel);
+            Directory.CreateDirectory(Path.GetDirectoryName(modelPath)!);
 
             // Write out the model
             using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -81,6 +82,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             if (this.SupportsOnnxPersistence())
             {
                 var onnxModelPath = GetModelPath(folderPath, true, isFinalModel);
+                Directory.CreateDirectory(Path.GetDirectoryName(onnxModelPath)!);
 
                 // Persist the model (ONNX)
                 using (var fileStream = new FileStream(onnxModelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -118,23 +120,12 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         public string GetModelPath(string folderPath, bool isOnnx, bool isFinalModel)
         {
             var modelPrefix = this.LabelColumnName.Replace("HallOfFame", "HoF");
-
-            // Model persistence convention used:
-            // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
-            string modelPathName = string.Empty;
-            string modelName = string.Format("{0}-{1}.onnx", modelPrefix, this.AlgorithmName);
             string modelFolder = isFinalModel ? "Final" : "Test";
+            var modelExtension = isOnnx ? "onnx" : "mlnet";
+            var modelFileName = $"{modelPrefix}-{this.AlgorithmName}.{modelExtension}";
 
-            if (isOnnx)
-            {
-                modelPathName = Path.Combine(folderPath, $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", modelPrefix, this.AlgorithmName));
-            }
-            else
-            {
-                modelPathName = Path.Combine(folderPath, $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", modelPrefix, this.AlgorithmName));
-            }
-
-            return modelPathName;
+            // Keep path construction platform-safe by combining each segment separately.
+            return Path.Combine(folderPath, "Models", modelFolder, modelFileName);
         }
     }
 }

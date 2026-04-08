@@ -102,6 +102,7 @@ namespace MLDotNet_BaseballClassification
             var cachedFullData = _mlContext.Data.Cache(dataFull);
 
             // Delete the Performance Metrics File(s)
+            Directory.CreateDirectory(Path.GetDirectoryName(_performanceMetricsTrainTestModels)!);
             File.Delete(_performanceMetricsTrainTestModels);
 
             #endregion

@@ -79,23 +79,12 @@ namespace MLDotNet_BaseballClassification
         public static string GetModelPath(string appFolder, string algorithmName, bool isOnnx, string label, bool isFinalModel)
         {
             var modelPrefix = label.Replace("HallOfFame", "HoF");
-
-            // Model persistance convention used:
-            // model + algorithmName + dependent variable column name + model persistance type extension (ONNX or native ML.NET)
-            string modelPathName = string.Empty;
-            string modelName = string.Format("{0}-{1}.onnx", modelPrefix, algorithmName);
             string modelFolder = isFinalModel ? "Final" : "Test";
+            var modelExtension = isOnnx ? "onnx" : "mlnet";
+            var modelFileName = $"{modelPrefix}-{algorithmName}.{modelExtension}";
 
-            if (isOnnx)
-            {
-                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.onnx", modelPrefix, algorithmName));
-            }
-            else
-            {
-                modelPathName = Path.Combine(appFolder, $@"Models\{modelFolder}", string.Format("{0}-{1}.mlnet", modelPrefix, algorithmName));
-            }
-
-            return modelPathName;
+            // Keep path construction platform-safe by combining each segment separately.
+            return Path.Combine(appFolder, "Models", modelFolder, modelFileName);
         }
 
         /// <summary>
@@ -141,6 +130,7 @@ namespace MLDotNet_BaseballClassification
         public static void SaveModel(bool isFinalModel, string appPath, MLContext mlContext, DataViewSchema schema, string algorithmName, string labelColumn, ITransformer model)
         {
             var modelPath = GetModelPath(appPath, algorithmName, false, labelColumn, isFinalModel);
+            Directory.CreateDirectory(Path.GetDirectoryName(modelPath)!);
 
             // Write out the model
             using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -161,6 +151,7 @@ namespace MLDotNet_BaseballClassification
         public static void SaveOnnxModel(bool isFinalModel, string appPath, string algorithmName, string labelColumn, ITransformer model, MLContext mlContext, IDataView inputData)
         {
             var modelPath = GetModelPath(appPath, algorithmName, true, labelColumn, isFinalModel);
+            Directory.CreateDirectory(Path.GetDirectoryName(modelPath)!);
 
             if (SupportsOnnxPersistance(algorithmName))
             {
