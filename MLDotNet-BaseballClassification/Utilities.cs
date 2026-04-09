@@ -33,6 +33,7 @@ namespace MLDotNet_BaseballClassification
             #endif
 
             // Evaluate the model metrics using validation data
+            // The persisted-model path keeps evaluation consistent with how inference models are loaded.
             var metrics = mlContext.BinaryClassification.Evaluate(transformedData, labelColumnName: labelColumn);
 
             return metrics;
@@ -83,7 +84,8 @@ namespace MLDotNet_BaseballClassification
             var modelExtension = isOnnx ? "onnx" : "mlnet";
             var modelFileName = $"{modelPrefix}-{algorithmName}.{modelExtension}";
 
-            // Keep path construction platform-safe by combining each segment separately.
+            // Model naming convention is shared across training/evaluation/inference:
+            // {LabelPrefix}-{Algorithm}.{Extension} under Models/Test or Models/Final.
             return Path.Combine(appFolder, "Models", modelFolder, modelFileName);
         }
 
@@ -164,6 +166,7 @@ namespace MLDotNet_BaseballClassification
                     //protoBufModel.WriteTo(fileStream);
                 }
             }
+            // ONNX export is intentionally skipped for unsupported trainers to avoid runtime conversion errors.
         }
 
         /// <summary>
@@ -179,7 +182,7 @@ namespace MLDotNet_BaseballClassification
                // , "StochasticGradientDescentNonCalibrated"
                 };
 
-            // Determine if algorithm is in the supported ONNX array
+            // Explicit allow-list keeps ONNX behavior predictable as trainer support evolves across ML.NET versions.
             var supportsOnnxPersitance = algorithmsThatSupportOnnxPersistance.Any(algorithmName.Contains);
 
             return supportsOnnxPersitance;

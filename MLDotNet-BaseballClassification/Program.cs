@@ -81,6 +81,8 @@ namespace MLDotNet_BaseballClassification
             var cachedTrainData = _mlContext.Data.Cache(dataTrain);
             var cachedTestData = _mlContext.Data.Cache(dataTest);
             var cachedFullData = _mlContext.Data.Cache(dataFull);
+            // The job intentionally keeps both split data (model selection/evaluation) and full data
+            // (final retrain for inference artifacts) in memory to avoid repeated file reads.
 
             // Reset GAM champion/challenger metrics output
             Directory.CreateDirectory(Path.GetDirectoryName(_gamChampionChallengerMetrics)!);
@@ -121,6 +123,7 @@ namespace MLDotNet_BaseballClassification
                 Console.WriteLine();
 
                 // Persist champion TEST model (trained on split training set)
+                // This artifact represents the selected challenger evaluated on the holdout split.
                 var championTestTrainer = new GamBaseballBatterTrainer(
                     labelColumn,
                     numberOfIterations: champion.NumberOfIterations,
@@ -157,6 +160,7 @@ namespace MLDotNet_BaseballClassification
                 ReportGamRun(championFinalTestRun);
 
                 // Persist champion FINAL model (re-trained on full data)
+                // Final models are always retrained on full data after selection so inference uses all rows.
                 var championFinalTrainer = new GamBaseballBatterTrainer(
                     labelColumn,
                     numberOfIterations: champion.NumberOfIterations,
@@ -186,6 +190,7 @@ namespace MLDotNet_BaseballClassification
                 .ThenBy(r => r.HyperparameterKey, StringComparer.Ordinal)
                 .Concat(finalChampionTestRuns.OrderBy(r => r.LabelColumn, StringComparer.Ordinal))
                 .ToList();
+            // Keep report ordering deterministic so repeated runs are easy to diff/review.
 
             WriteGamMetricsCsv(_gamChampionChallengerMetrics, allGamRuns);
 
@@ -205,6 +210,7 @@ namespace MLDotNet_BaseballClassification
             Console.ResetColor();
 
             // Retrieve final champion model paths
+            // Prediction/demo step always uses the final full-data GAM models saved above.
             var loadedModelOnHallOfFameBallot = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, GamAlgorithmName, false, "OnHallOfFameBallot", true)));
             var loadedModelInductedToHallOfFame = Utilities.LoadModel(_mlContext, (Utilities.GetModelPath(appFolder, GamAlgorithmName, false, "InductedToHallOfFame", true)));
 
@@ -351,6 +357,7 @@ namespace MLDotNet_BaseballClassification
                         trainer.Fit(trainData);
 
                         // Save as test model path so it can be evaluated using calibrated metrics.
+                        // We evaluate from persisted model to match the same path used for downstream reporting.
                         trainer.SaveModel(appFolder, false, trainData);
 
                         var metrics = Utilities.GetBinaryClassificationModelMetrics(
@@ -382,6 +389,8 @@ namespace MLDotNet_BaseballClassification
 
         private static void RankGamChallengers(List<GamRunResult> labelRuns)
         {
+            // Champion ranking priority:
+            // 1) maximize AUPRC, 2) maximize F1, 3) minimize LogLoss, 4) deterministic key ordering.
             var orderedRuns = labelRuns
                 .OrderByDescending(r => r.AreaUnderPrecisionRecallCurve)
                 .ThenByDescending(r => r.F1Score)
@@ -406,6 +415,7 @@ namespace MLDotNet_BaseballClassification
             int rank,
             bool isChampion)
         {
+            // Flatten metrics into a single row object so console and CSV reporting share the same source.
             var (tp, tn, fp, fn) = GetConfusionCounts(metrics);
 
             return new GamRunResult
@@ -517,6 +527,7 @@ namespace MLDotNet_BaseballClassification
 
                 foreach (var run in runs)
                 {
+                    // Use invariant formatting so decimal separators are stable across locales.
                     var row = string.Join(",",
                         run.RunType,
                         run.LabelColumn,

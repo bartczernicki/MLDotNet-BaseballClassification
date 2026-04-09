@@ -36,6 +36,8 @@ namespace MLDotNet_BaseballClassification.MachineLearning
 
             var singleFeatureTransformer
                 = trainedModel.LastTransformer as Microsoft.ML.Data.BinaryPredictionTransformer<Microsoft.ML.Calibrators.CalibratedModelParametersBase<Microsoft.ML.Trainers.FastTree.GamBinaryModelParameters, Microsoft.ML.Calibrators.PlattCalibrator>>;
+            // Feature contribution setup is GAM-specific here; this cast is valid because inference uses
+            // the final GAM model selected by the training workflow.
 
             var contributionEstimator = mlContext.Transforms
             .CalculateFeatureContribution(
@@ -58,6 +60,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
         {
             if (prediction.Probability > 0.5f)
             {
+                // Positive prediction: surface features that push score upward the most.
                 var topContributions = prediction.FeatureContributions
                     .Select((value, index) => new { Value = value, Index = index })
                     .OrderByDescending(x => x.Value)
@@ -70,6 +73,7 @@ namespace MLDotNet_BaseballClassification.MachineLearning
             }
             else
             {
+                // Negative prediction: surface strongest downward contributors for explainability symmetry.
                 var topContributions = prediction.FeatureContributions
                     .Select((value, index) => new { Value = value, Index = index })
                     .OrderBy(x => x.Value)
