@@ -2,6 +2,7 @@
 using Microsoft.ML.Data;
 using MLDotNet_BaseballClassification.MachineLearning;
 using MLDotNet_BaseballClassification.MachineLearning.Trainers;
+using MLDotNet_BaseballClassification.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -201,7 +202,7 @@ namespace MLDotNet_BaseballClassification
 
             #endregion
 
-            #region Step 4) New Predictions - Using Ficticious Player Data
+            #region Step 4) New Predictions - Using Fictitious Player Data
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("###############################");
@@ -218,115 +219,47 @@ namespace MLDotNet_BaseballClassification
             var predEngineOnHallOfFameBallot = MachineLearning.Utilities.CreatePredictionEngine(_mlContext, loadedModelOnHallOfFameBallot, cachedFullData);
             var predEngineInductedToHallOfFame = MachineLearning.Utilities.CreatePredictionEngine(_mlContext, loadedModelInductedToHallOfFame, cachedFullData);
 
-            // Create statistics for bad, average & great player
-            var badMLBBatter = new MLBBaseballBatter
-            {
-                FullPlayerName = "Bad Player",
-                ID = "Bad101",
-                InductedToHallOfFame = false,
-                LastYearPlayed = 0f,
-                OnHallOfFameBallot = false,
-                YearsPlayed = 2f,
-                AB = 100f,
-                R = 10f,
-                H = 30f,
-                Doubles = 1f,
-                Triples = 1f,
-                HR = 1f,
-                RBI = 10f,
-                SB = 10f,
-                BattingAverage = 0.3f,
-                SluggingPct = 0.15f,
-                AllStarAppearances = 1f,
-                //MVPs = 0f,
-                //TripleCrowns = 0f,
-                //GoldGloves = 0f,
-                //MajorLeaguePlayerOfTheYearAwards = 0f,
-                TB = 200f
-            };
-            var averageMLBBatter = new MLBBaseballBatter
-            {
-                FullPlayerName = "Average Player",
-                ID = "Avg101",
-                InductedToHallOfFame = false,
-                LastYearPlayed = 0f,
-                OnHallOfFameBallot = false,
-                YearsPlayed = 2f,
-                AB = 8393f,
-                R = 1162f,
-                H = 2340f,
-                Doubles = 410f,
-                Triples = 8f,
-                HR = 439f,
-                RBI = 1412f,
-                SB = 9f,
-                BattingAverage = 0.279f,
-                SluggingPct = 0.486f,
-                AllStarAppearances = 6f,
-                //MVPs = 0f,
-                //TripleCrowns = 0f,
-                //GoldGloves = 0f,
-                //MajorLeaguePlayerOfTheYearAwards = 0f,
-                TB = 4083f
-            };
-            var greatMLBBatter = new MLBBaseballBatter
-            {
-                FullPlayerName = "Great Player",
-                ID = "Great101",
-                InductedToHallOfFame = false,
-                LastYearPlayed = 0f,
-                OnHallOfFameBallot = false,
-                YearsPlayed = 20f,
-                AB = 10000f,
-                R = 1900f,
-                H = 3500f,
-                Doubles = 500f,
-                Triples = 150f,
-                HR = 600f,
-                RBI = 1800f,
-                SB = 400f,
-                BattingAverage = 0.350f,
-                SluggingPct = 0.65f,
-                AllStarAppearances = 14f,
-                //MVPs = 2f,
-                //TripleCrowns = 1f,
-                //GoldGloves = 4f,
-                //MajorLeaguePlayerOfTheYearAwards = 2f,
-                TB = 7000f
-            };
+            var playerSampleService = new FictitiousPlayerSampleService();
+            var playerSamples = playerSampleService.GetSamples();
 
+            if (playerSamples.Count != 30)
+            {
+                throw new InvalidOperationException($"Expected exactly 30 fictitious player samples, but found {playerSamples.Count}.");
+            }
 
-            // Make the predictions for both OnHallOfFameBallot & InductedToHallOfFame
-            var predBadOnHallOfFameBallot = predEngineOnHallOfFameBallot.Predict(badMLBBatter);
-            var predBadInductedToHallOfFame = predEngineInductedToHallOfFame.Predict(badMLBBatter);
-            var predAverageOnHallOfFameBallot = predEngineOnHallOfFameBallot.Predict(averageMLBBatter);
-            var predAverageInductedToHallOfFame = predEngineInductedToHallOfFame.Predict(averageMLBBatter);
-            var predGreatOnHallOfFameBallot = predEngineOnHallOfFameBallot.Predict(greatMLBBatter);
-            var predGreatInductedToHallOfFame = predEngineInductedToHallOfFame.Predict(greatMLBBatter);
+            var badSampleCount = playerSamples.Count(s => s.Tier == PlayerPredictionTier.Bad);
+            var averageSampleCount = playerSamples.Count(s => s.Tier == PlayerPredictionTier.Average);
+            var greatSampleCount = playerSamples.Count(s => s.Tier == PlayerPredictionTier.Great);
+
+            if (badSampleCount != 10 || averageSampleCount != 10 || greatSampleCount != 10)
+            {
+                throw new InvalidOperationException(
+                    $"Expected 10 samples per tier, but found Bad={badSampleCount}, Average={averageSampleCount}, Great={greatSampleCount}.");
+            }
+
+            var orderedSamples = playerSamples
+                .OrderBy(s => s.Tier)
+                .ThenBy(s => s.DisplayName, StringComparer.Ordinal)
+                .ToList();
 
             // Report the results
             Console.WriteLine("Algorithm Used for sample Model Prediction: " + GamAlgorithmName);
             Console.WriteLine("\n");
-            Console.WriteLine("Bad Baseball Player Prediction");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("On HOF Ballot Prediction: " + predBadOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predBadOnHallOfFameBallot.Probability);
-            Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predBadOnHallOfFameBallot));
-            Console.WriteLine("HOF Inducted Prediction:  " + predBadInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predBadInductedToHallOfFame.Probability);
-            Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predBadInductedToHallOfFame));
-            Console.WriteLine();
-            Console.WriteLine("Average Baseball Player Prediction");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("On HOF Ballot Prediction: " + predAverageOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predAverageOnHallOfFameBallot.Probability);
-            Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predAverageOnHallOfFameBallot));
-            Console.WriteLine("HOF Inducted Prediction:  " + predAverageInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predAverageInductedToHallOfFame.Probability);
-            Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predAverageInductedToHallOfFame));
-            Console.WriteLine();
-            Console.WriteLine("Great Baseball Player Prediction");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("On HOF Ballot Prediction: " + predGreatOnHallOfFameBallot.Prediction.ToString() + " | " + "Probability: " + predGreatOnHallOfFameBallot.Probability);
-            Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predGreatOnHallOfFameBallot));
-            Console.WriteLine("HOF Inducted Prediction:  " + predGreatInductedToHallOfFame.Prediction.ToString() + " | " + "Probability: " + predGreatInductedToHallOfFame.Probability);
-            Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predGreatInductedToHallOfFame));
+            Console.WriteLine($"Running predictions for {orderedSamples.Count} fictitious players (10 per tier).\n");
+
+            foreach (var sample in orderedSamples)
+            {
+                var predOnHallOfFameBallot = predEngineOnHallOfFameBallot.Predict(sample.Batter);
+                var predInductedToHallOfFame = predEngineInductedToHallOfFame.Predict(sample.Batter);
+
+                Console.WriteLine($"{sample.DisplayName} ({sample.Batter.ID}) - Tier: {sample.Tier}");
+                Console.WriteLine("--------------------------------------------------");
+                Console.WriteLine("On HOF Ballot Prediction: " + predOnHallOfFameBallot.Prediction + " | Probability: " + predOnHallOfFameBallot.Probability);
+                Console.WriteLine("On HOF Ballot Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predOnHallOfFameBallot));
+                Console.WriteLine("HOF Inducted Prediction:  " + predInductedToHallOfFame.Prediction + " | Probability: " + predInductedToHallOfFame.Probability);
+                Console.WriteLine("HOF Inducted Prediction - Top Contributing Features: " + MachineLearning.Utilities.GetTopContributingFeatures(predInductedToHallOfFame));
+                Console.WriteLine();
+            }
 
             #endregion
 
