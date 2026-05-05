@@ -1,7 +1,7 @@
 # Baseball Predictions - Training Model Job
 ![Training Job](https://github.com/bartczernicki/MLDotNet-BaseballClassification/blob/master/images/BaseballPredictionsTrainingModelJob.gif)
 
-A .Net model building job that builds several models using MLB Baseball data from 1876 - 2023.  
+A .Net model building job that builds several models using MLB Baseball data from 1876 - 2025.  
 
 The outcome are two classification supervised learning predictions:
 * On Hall Of Fame Ballot - whether a batter will be on the Hall of Fame Ballot, based on their career statistics
@@ -19,8 +19,8 @@ The model building job includes the following features:
 * Selected "best model" is used for inference on new ficticious baseball player careers (to verify overall performance)
 
 Current Requirements:
-* Visual Studio 2022 IDE (Community SKU+), .NET 9.x, ML.NET v4.0
+* Visual Studio 2026 IDE (Community SKU+) or VSCode (With C# DevKit), .NET 10.x, ML.NET v5.x
   
 Requirements (what the solution has been developed, compiled with orginally through current):
-* Visual Studio 2019 - 2022 IDE (Community SKU+), .NET Core 3.x - .NET 8.x, ML.NET v1.1 - v3.0.1
+* Visual Studio 2019 - 2026 IDE (Community SKU+) or VSCode (With C# DevKit), .NET Core 3.x - .NET 10.x, ML.NET v1.1 - v5.0
 
